@@ -29,7 +29,10 @@ jobs:
       - run: npm ci
 
       - name: Compila l'area di prova (/nuovo/, non indicizzabile)
-        run: npm run build:prova
+        run: |
+          npm run build:prova
+          # pagina "in preparazione" per gli indirizzi non ancora esistenti
+          printf 'ErrorDocument 404 /nuovo/404.html\n' > dist/.htaccess
 
       - name: Carica su United Host via FTPS (lftp)
         if: env.FTP_SERVER != ''
