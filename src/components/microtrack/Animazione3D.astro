@@ -1,0 +1,433 @@
+---
+// Animazione MicroTrack in vista 3D a 3/4 (assonometria vista da sud-ovest).
+// Stessa logica e stessi tempi della versione in pianta (v5): gatto sotto soglia → NESSUN ALLARME,
+// persona sopra soglia → ALLARME localizzato in metri, fino a 3 PTZ si posizionano sull'intruso.
+// Il terreno ha uno spessore e uno scavo "a finestra" sul lato sud mostra i due cavi sotto il prato:
+// deve essere chiaro che il sensore è interrato e che non c'è nessuna recinzione.
+// Coordinate di pianta (x, y) come nella v5; proiezione: P(x, y, z) = (a·x + c·y + e, b·x + d·y + f − z).
+const TH = -20 * Math.PI / 180, SC = 1, TILT = 0.55;
+const A = +(Math.cos(TH) * SC).toFixed(4), B = +(TILT * Math.sin(TH) * SC).toFixed(4);
+const C = +(-Math.sin(TH) * SC).toFixed(4), D = +(TILT * Math.cos(TH) * SC).toFixed(4);
+const E = -58, F = 200;
+const P = (x: number, y: number, z = 0) => [+(A * x + C * y + E).toFixed(1), +(B * x + D * y + F - z).toFixed(1)];
+const pts = (arr: number[][]) => arr.map((p) => P(p[0], p[1], p[2] ?? 0).join(',')).join(' ');
+const MATRICE = `matrix(${A} ${B} ${C} ${D} ${E} ${F})`;
+
+const N = 60, X0 = 60, LARGH = 780, BASE = 590, ALT = 120;
+const soglie = Array.from({ length: N }, (_, i) =>
+  +(0.55 + 0.12 * Math.sin(i * 0.33) + 0.07 * Math.sin(i * 1.1 + 1.3) + 0.03 * Math.sin(i * 2.7)).toFixed(3));
+const w = LARGH / N;
+const pathSoglia = soglie.map((v, i) => `${i === 0 ? 'M' : 'H'}${X0 + i * w} ${i === 0 ? '' : 'V'}${(BASE - v * ALT).toFixed(1)}`).join(' ')
+  .replace(/^M(\S+) V/, 'M$1 ') + ` H${X0 + LARGH}`;
+const yEtichetta = BASE - Math.max(...soglie.slice(36)) * ALT - 8;
+
+// terreno: lastra 60..840 × 60..440, spessore T (px a schermo)
+const T = 34;
+// stabile
+const S = { x1: 380, x2: 540, y1: 215, y2: 311, h: 46 };
+// alberi
+const alberi = [[215, 190], [250, 335], [690, 345]];
+// telecamere PTZ: x, y in pianta, h = altezza della testa; riposo = direzione in pianta (gradi)
+const telecamere = [
+  { x: 382, y: 217, h: 56, riposo: -135, palo: false },
+  { x: 726, y: 124, h: 56, riposo: 150, palo: true },
+  { x: 174, y: 376, h: 56, riposo: -40, palo: true },
+];
+// scavo a finestra sul lato sud (attraversa la fascia del campo e i due cavi)
+const SV = { x1: 380, x2: 520, y1: 350, y2: 438, p: 26 };
+const yCavi = [389, 411];
+const zCavi = -12;
+// armadio del processore
+const M = { x1: 618, x2: 646, y1: 280, y2: 300, h: 16 };
+
+const passi = [
+  { t: 0, fermo: 0, titolo: 'Campo attivo' },
+  { t: 1, fermo: 3.6, titolo: 'Passa un animale' },
+  { t: 5.6, fermo: 7.3, titolo: 'Passa una persona' },
+  { t: 9.5, fermo: 10, titolo: 'Allarme localizzato' },
+];
+const proiezione = JSON.stringify({ A, B, C, D, E, F });
+---
+<figure class="animazione" data-mt3d data-soglie={JSON.stringify(soglie)} data-proiezione={proiezione}>
+  <div class="comandi" role="group" aria-label="Passi dell'animazione">
+    {passi.map((p, i) => (
+      <button type="button" data-vai={p.t} data-fermo={p.fermo} aria-pressed={i === 0 ? 'true' : 'false'}><span class="n">{i + 1}</span> {p.titolo}</button>
+    ))}
+    <button type="button" class="pausa" data-pausa aria-label="Metti in pausa l'animazione">❚❚</button>
+  </div>
+
+  <div class="scorri"><svg viewBox="0 0 900 672" role="img" aria-labelledby="mt3-titolo mt3-desc">
+    <title id="mt3-titolo">Come MicroTrack distingue un animale da una persona – vista 3D</title>
+    <desc id="mt3-desc">Vista a tre quarti di un terreno con uno stabile. Lungo il perimetro, sotto il prato, corrono due cavi sensori interrati: uno scavo sul lato anteriore li mostra sotto la superficie. Il campo di rilevazione è invisibile e non c'è nessuna recinzione. Un gatto attraversa il perimetro: il segnale resta sotto la soglia e compare la scritta nessun allarme. Una persona attraversa: il segnale supera la soglia, scatta l'allarme localizzato in metri e fino a tre telecamere PTZ su pali si posizionano sull'intruso.</desc>
+
+    <!-- Legenda -->
+    <g class="legenda" transform="translate(40 30)">
+      <rect x="0" y="-11" width="30" height="14" rx="3" fill="#4A90D9" fill-opacity=".5" />
+      <text x="38" y="0">campo invisibile</text>
+      <line x1="185" y1="-4" x2="215" y2="-4" stroke="#FF5A47" stroke-width="3" stroke-dasharray="6 4" />
+      <text x="223" y="0">cavi interrati sotto il prato</text>
+      <rect x="458" y="-11" width="3" height="14" fill="#fff" />
+      <text x="469" y="0">sottocelle (2 m)</text>
+      <circle cx="640" cy="-4" r="7" fill="#0A1A2E" stroke="#E3ECF4" stroke-width="2.5" />
+      <text x="654" y="0">telecamere PTZ</text>
+    </g>
+
+    <!-- lastra di terreno: facce laterali (sezione del suolo) -->
+    <polygon points={pts([[60, 60, 0], [60, 440, 0], [60, 440, -T], [60, 60, -T]])} fill="#4A3424" />
+    <polygon points={pts([[60, 440, 0], [840, 440, 0], [840, 440, -T], [60, 440, -T]])} fill="#5C4130" />
+    <polyline points={pts([[60, 60, -12], [60, 440, -12], [840, 440, -12]])} fill="none" stroke="#3A281B" stroke-width="2" />
+    <polyline points={pts([[60, 60, -24], [60, 440, -24], [840, 440, -24]])} fill="none" stroke="#3A281B" stroke-width="2" />
+    <polyline points={pts([[60, 60, 0], [60, 440, 0], [840, 440, 0]])} fill="none" stroke="#3E8E5A" stroke-width="3" />
+
+    <!-- superficie del terreno (coordinate di pianta proiettate) -->
+    <g transform={MATRICE}>
+      <rect x="60" y="60" width="780" height="380" fill="#1C4A31" />
+      <rect x="110" y="70" width="680" height="360" rx="56" fill="#24593C" />
+      <!-- ombre degli alberi e dello stabile -->
+      {alberi.map(([x, y]) => <ellipse cx={x + 10} cy={y + 6} rx="24" ry="20" fill="#000" fill-opacity=".22" />)}
+      <rect x={S.x1 + 8} y={S.y1 + 8} width={S.x2 - S.x1} height={S.y2 - S.y1} fill="#000" fill-opacity=".22" />
+      <!-- collegamento interrato stabile → processore → cavi -->
+      <line x1="540" y1="290" x2="750" y2="290" stroke="#8FB0CC" stroke-width="2" stroke-dasharray="6 5" />
+      <defs><path id="mt3-percorso" data-percorso d="M710 400 H190 A40 40 0 0 1 150 360 V140 A40 40 0 0 1 190 100 H710 A40 40 0 0 1 750 140 V360 A40 40 0 0 1 710 400 Z" /></defs>
+      <use href="#mt3-percorso" fill="none" stroke="#4A90D9" stroke-opacity=".42" stroke-width="34" />
+      <use href="#mt3-percorso" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="34" data-celle />
+      <use href="#mt3-percorso" fill="none" stroke="#FFC20E" stroke-width="38" stroke-opacity="0" data-evid-animale />
+      <use href="#mt3-percorso" fill="none" stroke="#E24C3B" stroke-width="40" stroke-opacity="0" data-evid-persona />
+      <g data-tacche></g>
+      <circle r="22" fill="none" stroke="#FF5A47" stroke-width="3" data-onda opacity="0" />
+    </g>
+    <!-- cavi visti "in trasparenza" sotto il prato -->
+    <g transform={`translate(0 ${-zCavi})`}>
+      <g transform={MATRICE} fill="none" stroke="#FF5A47" stroke-width="2.5" stroke-dasharray="7 5" opacity=".75">
+        <path d="M710 389 H190 A29 29 0 0 1 161 360 V140 A29 29 0 0 1 190 111 H710 A29 29 0 0 1 739 140 V360 A29 29 0 0 1 710 389 Z" />
+        <path d="M710 411 H190 A51 51 0 0 1 139 360 V140 A51 51 0 0 1 190 89 H710 A51 51 0 0 1 761 140 V360 A51 51 0 0 1 710 411 Z" />
+      </g>
+    </g>
+
+    <!-- scavo a finestra: visto dall'apertura (clip sul bordo), pareti nord ed est, fondo e i due cavi -->
+    <clipPath id="mt3-scavo"><polygon points={pts([[SV.x1, SV.y1, 0], [SV.x2, SV.y1, 0], [SV.x2, SV.y2, 0], [SV.x1, SV.y2, 0]])} /></clipPath>
+    <g clip-path="url(#mt3-scavo)">
+    <polygon points={pts([[SV.x1, SV.y1, 0], [SV.x2, SV.y1, 0], [SV.x2, SV.y2, 0], [SV.x1, SV.y2, 0]])} fill="#2E2016" />
+    <polygon points={pts([[SV.x1, SV.y1, -SV.p], [SV.x2, SV.y1, -SV.p], [SV.x2, SV.y2, -SV.p], [SV.x1, SV.y2, -SV.p]])} fill="#3D2A1D" />
+    <polygon points={pts([[SV.x1, SV.y1, 0], [SV.x2, SV.y1, 0], [SV.x2, SV.y1, -SV.p], [SV.x1, SV.y1, -SV.p]])} fill="#6B4B35" />
+    <polygon points={pts([[SV.x2, SV.y1, 0], [SV.x2, SV.y2, 0], [SV.x2, SV.y2, -SV.p], [SV.x2, SV.y1, -SV.p]])} fill="#56402D" />
+        <polyline points={pts([[SV.x1, SV.y1, -10], [SV.x2, SV.y1, -10], [SV.x2, SV.y2, -10]])} fill="none" stroke="#7E5A40" stroke-width="1.5" />
+    {yCavi.map((y) => (
+      <g>
+        <line x1={P(SV.x1, y, zCavi)[0]} y1={P(SV.x1, y, zCavi)[1]} x2={P(SV.x2, y, zCavi)[0]} y2={P(SV.x2, y, zCavi)[1]} stroke="#FF5A47" stroke-width="5" stroke-linecap="round" />
+        <line x1={P(SV.x1, y, zCavi)[0]} y1={P(SV.x1, y, zCavi)[1] - 1.5} x2={P(SV.x2, y, zCavi)[0]} y2={P(SV.x2, y, zCavi)[1] - 1.5} stroke="#FFB3A8" stroke-width="1.2" />
+      </g>
+    ))}
+    </g>
+    <!-- bordo d'erba dello scavo -->
+    <polyline points={pts([[SV.x1, SV.y2, 0], [SV.x1, SV.y1, 0], [SV.x2, SV.y1, 0], [SV.x2, SV.y2, 0]])} fill="none" stroke="#3E8E5A" stroke-width="3" />
+    <!-- richiamo dello scavo -->
+    <g>
+      <line x1={P(SV.x2, SV.y2, -SV.p / 2)[0] + 6} y1={P(SV.x2, SV.y2, -SV.p / 2)[1] + 8} x2={P(SV.x2, SV.y2, -SV.p / 2)[0] + 40} y2={P(SV.x2, SV.y2, -SV.p / 2)[1] + 54} stroke="#E3ECF4" stroke-width="1.5" />
+      <text x={P(SV.x2, SV.y2, -SV.p / 2)[0] + 44} y={P(SV.x2, SV.y2, -SV.p / 2)[1] + 60} class="et piccolo forte">due cavi sensori interrati</text>
+      <text x={P(SV.x2, SV.y2, -SV.p / 2)[0] + 44} y={P(SV.x2, SV.y2, -SV.p / 2)[1] + 78} class="et piccolo">sotto il prato: nessuna recinzione</text>
+    </g>
+
+    <!-- alberi (tronco + chioma) -->
+    {alberi.map(([x, y]) => (
+      <g>
+        <line x1={P(x, y)[0]} y1={P(x, y)[1]} x2={P(x, y, 20)[0]} y2={P(x, y, 20)[1]} stroke="#5A4230" stroke-width="4" />
+        <circle cx={P(x, y, 30)[0]} cy={P(x, y, 30)[1]} r="17" fill="#2E6B47" stroke="#3E8E5A" stroke-width="2" />
+      </g>
+    ))}
+
+    <!-- stabile (volume) -->
+    <polygon points={pts([[S.x1, S.y1, 0], [S.x1, S.y2, 0], [S.x1, S.y2, S.h], [S.x1, S.y1, S.h]])} fill="#2A3F55" stroke="#8FB0CC" stroke-width="1.5" />
+    <polygon points={pts([[S.x1, S.y2, 0], [S.x2, S.y2, 0], [S.x2, S.y2, S.h], [S.x1, S.y2, S.h]])} fill="#34506B" stroke="#8FB0CC" stroke-width="1.5" />
+    <polygon points={pts([[S.x1, S.y1, S.h], [S.x2, S.y1, S.h], [S.x2, S.y2, S.h], [S.x1, S.y2, S.h]])} fill="#425F7C" stroke="#8FB0CC" stroke-width="1.5" />
+    <text x={P((S.x1 + S.x2) / 2, (S.y1 + S.y2) / 2, S.h)[0]} y={P((S.x1 + S.x2) / 2, (S.y1 + S.y2) / 2, S.h)[1] + 6} text-anchor="middle" class="et forte">STABILE</text>
+
+    <!-- armadio del processore -->
+    <polygon points={pts([[M.x1, M.y2, 0], [M.x2, M.y2, 0], [M.x2, M.y2, M.h], [M.x1, M.y2, M.h]])} fill="#0A1A2E" stroke="#8FB0CC" stroke-width="1.5" />
+    <polygon points={pts([[M.x1, M.y1, 0], [M.x1, M.y2, 0], [M.x1, M.y2, M.h], [M.x1, M.y1, M.h]])} fill="#13263F" stroke="#8FB0CC" stroke-width="1.5" />
+    <polygon points={pts([[M.x1, M.y1, M.h], [M.x2, M.y1, M.h], [M.x2, M.y2, M.h], [M.x1, M.y2, M.h]])} fill="#1F3A5A" stroke="#8FB0CC" stroke-width="1.5" />
+    <text x={P(632, 300)[0] + 4} y={P(632, 300)[1] + 22} text-anchor="middle" class="et piccolo">processore MTP</text>
+
+    <!-- etichette in metri -->
+    <g data-metri></g>
+
+    <!-- coni delle PTZ (sotto le figure) -->
+    {telecamere.map((_, i) => <polygon data-cono={i} />)}
+
+    <!-- gatto (di profilo) -->
+    <g data-gatto opacity="0">
+      <ellipse cx="0" cy="0" rx="10" ry="3" fill="#000" fill-opacity=".3" />
+      <path d="M-9 -4 V0 M-5 -4 V0 M5 -4 V0 M9 -4 V0" stroke="#D9D2C5" stroke-width="2" />
+      <ellipse cx="0" cy="-7" rx="11" ry="5" fill="#D9D2C5" />
+      <circle cx="11" cy="-11" r="4.5" fill="#D9D2C5" />
+      <path d="M8.5 -14.5 l1.5 -4 l2 3.5 M12.5 -14.5 l2 -4 l1 4" fill="#D9D2C5" stroke="#D9D2C5" stroke-width="1.5" />
+      <path d="M-10 -8 q-8 -3 -9 -12" stroke="#D9D2C5" stroke-width="2.5" fill="none" stroke-linecap="round" />
+    </g>
+    <!-- persona (in piedi) -->
+    <g data-persona opacity="0">
+      <ellipse cx="0" cy="0" rx="11" ry="4" fill="#000" fill-opacity=".35" />
+      <path d="M-3 -16 L-5 0 M3 -16 L5 0" stroke="#C9D6E2" stroke-width="4" stroke-linecap="round" />
+      <rect x="-7" y="-34" width="14" height="20" rx="5" fill="#F4F7FA" />
+      <circle cx="0" cy="-40" r="6" fill="#F4F7FA" />
+    </g>
+
+    <!-- pali e teste delle PTZ -->
+    {telecamere.map((c, i) => (
+      <g>
+        {c.palo && <line x1={P(c.x, c.y)[0]} y1={P(c.x, c.y)[1]} x2={P(c.x, c.y, c.h)[0]} y2={P(c.x, c.y, c.h)[1]} stroke="#B9C7D4" stroke-width="3.5" />}
+        {!c.palo && <line x1={P(c.x, c.y, S.h)[0]} y1={P(c.x, c.y, S.h)[1]} x2={P(c.x, c.y, c.h)[0]} y2={P(c.x, c.y, c.h)[1]} stroke="#B9C7D4" stroke-width="3.5" />}
+        <g transform={`translate(${P(c.x, c.y, c.h)[0]} ${P(c.x, c.y, c.h)[1]})`}>
+          <g data-ptz={i}>
+            <rect x="-4" y="-6" width="22" height="12" rx="3" fill="#E3ECF4" />
+            <rect x="16" y="-4.5" width="5" height="9" rx="1.5" fill="#0A1A2E" />
+          </g>
+          <circle r="7.5" fill="#0A1A2E" stroke="#E3ECF4" stroke-width="2.5" />
+          <text x="0" y="-14" text-anchor="middle" class="et piccolo forte">{`PTZ ${i + 1}`}</text>
+        </g>
+      </g>
+    ))}
+
+    <!-- etichette di stato -->
+    <g data-no-allarme opacity="0">
+      <rect x="-93" y="-15" width="186" height="30" rx="6" fill="#FFC20E" />
+      <text x="0" y="6" text-anchor="middle" class="et forte scuro">NESSUN ALLARME</text>
+    </g>
+    <g data-allarme opacity="0">
+      <rect x="-96" y="-15" width="192" height="30" rx="6" fill="#E24C3B" />
+      <text x="0" y="6" text-anchor="middle" class="et forte" data-testo-allarme>ALLARME · 0 m</text>
+    </g>
+
+    <!-- Grafico del segnale per sottocella -->
+    <g class="grafico" transform="translate(0 32)">
+      <text x="30" y="535" transform="rotate(-90 30 535)" text-anchor="middle" class="et piccolo">segnale (dB)</text>
+      <line x1="60" y1="590" x2="840" y2="590" stroke="#8FB0CC" stroke-width="1.5" />
+      <line x1="60" y1="470" x2="60" y2="590" stroke="#8FB0CC" stroke-width="1.5" />
+      <g data-barre></g>
+      <path d={pathSoglia} fill="none" stroke="#E24C3B" stroke-width="2.5" stroke-linejoin="round" />
+      <text x="836" y={yEtichetta} text-anchor="end" class="et piccolo rosso">soglia di allarme calibrata sul terreno</text>
+      <g class="et piccolo" text-anchor="middle">
+        <text x="60" y="608">0</text><text x="255" y="608">30</text><text x="450" y="608">60</text><text x="645" y="608">90</text><text x="840" y="608">120</text>
+      </g>
+      <text x="450" y="630" text-anchor="middle" class="et piccolo">posizione lungo il perimetro (m) · una barra per sottocella</text>
+    </g>
+  </svg></div>
+
+  <p class="stato" data-stato>Campo attivo: il perimetro è sorvegliato, nessun segnale supera la soglia.</p>
+</figure>
+
+<script>
+  const DURATA = 15, N = 60, METRI = 120;
+  const X0 = 60, LARGH = 780, BASE = 590;
+  const PX = 290; // ingresso della persona sul lato nord: visuale libera per tutte e tre le PTZ
+  const NS = 'http://www.w3.org/2000/svg';
+  const CAM = [
+    { x: 382, y: 217, h: 56, riposo: -135 },
+    { x: 726, y: 124, h: 56, riposo: 150 },
+    { x: 174, y: 376, h: 56, riposo: -40 },
+  ];
+
+  document.querySelectorAll<HTMLElement>('[data-mt3d]').forEach((box) => {
+    const q = <T extends Element>(s: string) => box.querySelector(s) as T;
+    const soglie: number[] = JSON.parse(box.dataset.soglie || '[]');
+    const pr = JSON.parse(box.dataset.proiezione || '{}');
+    const P = (x: number, y: number, z = 0): [number, number] => [pr.A * x + pr.C * y + pr.E, pr.B * x + pr.D * y + pr.F - z];
+
+    const percorso = q<SVGPathElement>('[data-percorso]');
+    const L = percorso.getTotalLength();
+    const cella = L / N;
+    q<SVGUseElement>('[data-celle]').setAttribute('stroke-dasharray', `2 ${cella - 2}`);
+    const ascissa = (x: number, y: number) => {
+      let best = 0, dmin = Infinity;
+      for (let s = 0; s < L; s += 2) {
+        const p = percorso.getPointAtLength(s);
+        const d = (p.x - x) ** 2 + (p.y - y) ** 2;
+        if (d < dmin) { dmin = d; best = s; }
+      }
+      return best;
+    };
+    const sGatto = ascissa(150, 300), sPersona = ascissa(PX, 100);
+    const iGatto = Math.floor(sGatto / cella), iPersona = Math.floor(sPersona / cella);
+    const metriPersona = Math.round((iPersona + 0.5) * METRI / N);
+    const pA = percorso.getPointAtLength((iPersona + 0.5) * cella);
+
+    const evid = (sel: string, i: number) => {
+      const el = q<SVGUseElement>(sel);
+      el.setAttribute('stroke-dasharray', `${cella} ${L}`);
+      el.setAttribute('stroke-dashoffset', String(-i * cella));
+      return el;
+    };
+    const evAnimale = evid('[data-evid-animale]', iGatto);
+    const evPersona = evid('[data-evid-persona]', iPersona);
+
+    // progressive in metri: tacca sul terreno, etichetta a schermo fuori dal perimetro
+    const gTacche = q<SVGGElement>('[data-tacche]'), gMetri = q<SVGGElement>('[data-metri]');
+    [0, 30, 60, 90].forEach((m) => {
+      const s0 = (m / METRI) * L;
+      const a = percorso.getPointAtLength(s0), b = percorso.getPointAtLength((s0 + 1) % L);
+      const tx = b.x - a.x, ty = b.y - a.y, n = Math.hypot(tx, ty) || 1;
+      const nx = ty / n, ny = -tx / n;
+      const tacca = document.createElementNS(NS, 'line');
+      tacca.setAttribute('x1', String(a.x - nx * 19)); tacca.setAttribute('y1', String(a.y - ny * 19));
+      tacca.setAttribute('x2', String(a.x + nx * 19)); tacca.setAttribute('y2', String(a.y + ny * 19));
+      tacca.setAttribute('stroke', '#FFFFFF'); tacca.setAttribute('stroke-width', '5');
+      gTacche.append(tacca);
+      const [ex, ey] = P(a.x + nx * 36, a.y + ny * 36);
+      const et = document.createElementNS(NS, 'text');
+      et.setAttribute('x', String(ex)); et.setAttribute('y', String(ey + 5));
+      et.setAttribute('text-anchor', 'middle'); et.setAttribute('fill', '#FFFFFF'); et.setAttribute('font-size', '15');
+      et.setAttribute('font-weight', '700'); et.setAttribute('font-family', 'Inter, Arial, sans-serif');
+      et.setAttribute('paint-order', 'stroke'); et.setAttribute('stroke', '#0A1A2E'); et.setAttribute('stroke-width', '4');
+      et.textContent = `${m} m`;
+      gMetri.append(et);
+    });
+
+    // barre del grafico
+    const gBarre = q<SVGGElement>('[data-barre]');
+    const barre = Array.from({ length: N }, (_, i) => {
+      const r = document.createElementNS(NS, 'rect');
+      r.setAttribute('x', String(X0 + i * (LARGH / N) + 2));
+      r.setAttribute('width', String(LARGH / N - 4));
+      r.setAttribute('rx', '1.5');
+      gBarre.appendChild(r);
+      return r;
+    });
+    const rumore = barre.map((_, i) => 0.5 + 0.5 * Math.sin(i * 1.7));
+
+    const gatto = q<SVGGElement>('[data-gatto]'), persona = q<SVGGElement>('[data-persona]');
+    const noAllarme = q<SVGGElement>('[data-no-allarme]'), allarme = q<SVGGElement>('[data-allarme]');
+    const onda = q<SVGCircleElement>('[data-onda]');
+    onda.setAttribute('cx', String(pA.x)); onda.setAttribute('cy', String(pA.y));
+    q<SVGTextElement>('[data-testo-allarme]').textContent = `ALLARME · ${metriPersona} m`;
+    const [lax, lay] = P(pA.x, pA.y, 0);
+    allarme.setAttribute('transform', `translate(${lax - 120} ${lay - 34})`);
+    const [nax, nay] = P(185, 300, 0);
+    noAllarme.setAttribute('transform', `translate(${nax + 118} ${nay + 12})`);
+
+    const cams = CAM.map((c, i) => ({ ...c, testa: q<SVGGElement>(`[data-ptz="${i}"]`), cono: q<SVGPolygonElement>(`[data-cono="${i}"]`), H: P(c.x, c.y, c.h) }));
+    const RAD = Math.PI / 180;
+    const vicino = (da: number, a: number) => { const d = ((a - da + 540) % 360) - 180; return da + d; };
+    const liscio = (k: number) => k * k * (3 - 2 * k);
+    const fra = (t: number, a: number, b: number) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+    const vicinanza = (d: number) => Math.max(0, 1 - Math.abs(d) / 34);
+    const stato = q<HTMLElement>('[data-stato]');
+    const pulsanti = [...box.querySelectorAll<HTMLButtonElement>('[data-vai]')];
+    const pausa = q<HTMLButtonElement>('[data-pausa]');
+
+    const disegna = (t: number) => {
+      // gatto: velocità costante (t 1 → 5); la cella resta gialla circa 1 s dopo il passaggio
+      const visGatto = t >= 1 && t < 5.3;
+      const gx = 75 + fra(t, 1, 5) * 175;
+      const [cx, cy] = P(gx, 300);
+      gatto.setAttribute('transform', `translate(${cx} ${cy})`);
+      gatto.setAttribute('opacity', visGatto ? '1' : '0');
+      const segGatto = visGatto ? vicinanza(gx < 150 ? gx - 150 : Math.max(0, gx - 195)) : 0;
+
+      // persona: dal bordo nord verso l'interno (t 5.6 → 9.4), poi resta ferma
+      const visPersona = t >= 5.6 && t < 14.4;
+      const py = 64 + fra(t, 5.6, 9.4) * 101;
+      const [qx, qy] = P(PX, py);
+      persona.setAttribute('transform', `translate(${qx} ${qy})`);
+      persona.setAttribute('opacity', visPersona ? '1' : '0');
+      const segPersona = visPersona ? vicinanza((py - 100) * 1.6) : 0;
+      const inAllarme = t >= 7.8 && t < 14.4;
+
+      barre.forEach((b, i) => {
+        let v = 0.12 + 0.08 * rumore[i] * (0.6 + 0.4 * Math.sin(t * 3 + i));
+        let colore = '#4A90D9';
+        if (i === iGatto) { v += (0.8 * soglie[i] - v) * segGatto; if (segGatto > 0.05) colore = '#FFC20E'; }
+        if (Math.abs(i - iPersona) <= 1) {
+          const k = i === iPersona ? 1.3 : 0.45;
+          v += k * soglie[i] * segPersona;
+          if (inAllarme && i === iPersona) { v = Math.max(v, soglie[i] + 0.12 + 0.04 * Math.sin(t * 6)); colore = '#E24C3B'; }
+        }
+        const h = Math.min(1, v) * 120;
+        b.setAttribute('y', String(BASE - h));
+        b.setAttribute('height', String(h));
+        b.setAttribute('fill', colore);
+      });
+
+      evAnimale.setAttribute('stroke-opacity', String(0.95 * segGatto));
+      evPersona.setAttribute('stroke-opacity', inAllarme ? String(0.65 + 0.3 * Math.sin(t * 6)) : '0');
+      allarme.setAttribute('opacity', inAllarme ? '1' : '0');
+      noAllarme.setAttribute('opacity', t >= 1 && t < 5.6 && gx >= 170 ? '1' : '0');
+      const fase = (t * 0.9) % 1;
+      onda.setAttribute('opacity', inAllarme ? '1' : '0');
+      onda.setAttribute('r', String(18 + fase * 26));
+      onda.setAttribute('stroke-opacity', String(1 - fase));
+
+      // PTZ: a riposo panoramica larga; in allarme ruotano, stringono e allungano il cono (zoom) sull'intruso
+      cams.forEach((c) => {
+        const verso = (yy: number) => vicino(c.riposo, Math.atan2(yy - c.y, PX - c.x) / RAD);
+        const dist = (yy: number) => Math.hypot(PX - c.x, yy - c.y);
+        const lungo = (yy: number) => dist(yy) * 1.25 + 40;
+        const semiZoom = Math.max(4, Math.min(12, 1400 / dist(165)));
+        let k = 0, ang = c.riposo, r = 125;
+        if (inAllarme) { k = liscio(fra(t, 7.8, 8.7)); ang = c.riposo + (verso(py) - c.riposo) * k; r = 125 + (lungo(py) - 125) * k; }
+        else if (t >= 14.4) { const tornata = liscio(fra(t, 14.4, 15)); k = 1 - tornata; ang = verso(165) + (c.riposo - verso(165)) * tornata; r = lungo(165) + (125 - lungo(165)) * tornata; }
+        const semi = 42 - (42 - semiZoom) * k;
+        // cono 3D: vertice nella testa della telecamera, arco proiettato sul terreno
+        const arco: string[] = [];
+        for (let j = 0; j <= 10; j++) {
+          const a = (ang - semi + (2 * semi * j) / 10) * RAD;
+          const [ax, ay] = P(c.x + r * Math.cos(a), c.y + r * Math.sin(a));
+          arco.push(`${ax.toFixed(1)},${ay.toFixed(1)}`);
+        }
+        c.cono.setAttribute('points', `${c.H[0].toFixed(1)},${c.H[1].toFixed(1)} ${arco.join(' ')}`);
+        c.cono.setAttribute('fill', k > 0.5 ? '#FF7B6B' : '#FFE08A');
+        c.cono.setAttribute('fill-opacity', k > 0.5 ? '.42' : '.22');
+        // orientamento della testa a schermo: verso il punto inquadrato a terra
+        const [mx, my] = P(c.x + 60 * Math.cos(ang * RAD), c.y + 60 * Math.sin(ang * RAD));
+        c.testa.setAttribute('transform', `rotate(${(Math.atan2(my - c.H[1], mx - c.H[0]) / RAD).toFixed(1)})`);
+      });
+
+      let testo = 'Campo attivo: il perimetro è sorvegliato, nessun segnale supera la soglia.';
+      let passo = 0;
+      if (t >= 1 && t < 5.6) { passo = 1; testo = 'Un piccolo animale attraversa: il segnale sale ma resta sotto la soglia di quel tratto, nessun allarme.'; }
+      else if (t >= 5.6 && t < 7.8) { passo = 2; testo = 'Una persona si avvicina al perimetro…'; }
+      else if (inAllarme) { passo = t < 9.5 ? 2 : 3; testo = `Allarme: il segnale supera la soglia di quel tratto. Intrusione localizzata a ${metriPersona} m lungo il perimetro: le telecamere PTZ (fino a 3 insieme) si posizionano sull’intruso e lo seguono.`; }
+      if (stato.textContent !== testo) stato.textContent = testo;
+      stato.classList.toggle('rosso', inAllarme);
+      pulsanti.forEach((p, i) => p.setAttribute('aria-pressed', String(i === passo)));
+    };
+
+    let t = 0, inCorso = !window.matchMedia('(prefers-reduced-motion: reduce)').matches, ultimo = 0;
+    if (!inCorso) t = 10;
+    const aggiornaPausa = () => {
+      pausa.textContent = inCorso ? '❚❚' : '▶';
+      pausa.setAttribute('aria-label', inCorso ? 'Metti in pausa l’animazione' : 'Avvia l’animazione');
+    };
+    const ciclo = (ora: number) => {
+      if (inCorso) { t = (t + Math.min(0.1, (ora - ultimo) / 1000)) % DURATA; disegna(t); }
+      ultimo = ora;
+      requestAnimationFrame(ciclo);
+    };
+    pulsanti.forEach((p) => p.addEventListener('click', () => {
+      t = Number(inCorso ? p.dataset.vai : p.dataset.fermo);
+      disegna(t);
+    }));
+    pausa.addEventListener('click', () => { inCorso = !inCorso; aggiornaPausa(); });
+    aggiornaPausa();
+    disegna(t);
+    requestAnimationFrame((ora) => { ultimo = ora; requestAnimationFrame(ciclo); });
+  });
+</script>
+
+<style>
+  .animazione{margin:0;display:grid;gap:12px}
+  .scorri{overflow-x:auto;border-radius:16px}
+  @media (max-width:640px){ svg{min-width:640px} }
+  svg{display:block;width:100%;height:auto;border-radius:16px;background:#0A1A2E;border:1px solid rgba(143,176,204,.45)}
+  .legenda text,.et{font-family:var(--font-testo);font-size:17px;fill:#E3ECF4}
+  .piccolo{font-size:15px}
+  .forte{font-weight:700;fill:#fff}
+  .rosso{fill:#FF7B6B}
+  .scuro{fill:#0A1A2E}
+  .stato{margin:0;min-height:3em;font-family:var(--font-testo);font-size:16px;line-height:1.5;color:var(--ghiaccio);border-left:4px solid var(--luminoso);padding:4px 0 4px 12px}
+  .stato.rosso{border-color:#E24C3B;color:#fff}
+  .comandi{display:flex;flex-wrap:wrap;gap:6px}
+  button{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;border:1px solid rgba(143,176,204,.55);background:transparent;color:var(--ghiaccio);font:600 14px var(--font-testo);cursor:pointer;transition:background .3s ease,border-color .3s ease}
+  button:hover{border-color:var(--luminoso)}
+  button[aria-pressed="true"]{background:var(--luminoso);border-color:var(--luminoso);color:#fff}
+  .pausa{min-width:40px;justify-content:center;margin-left:auto}
+  .n{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.18);font-size:13px}
+</style>

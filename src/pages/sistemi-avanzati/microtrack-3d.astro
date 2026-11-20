@@ -1,0 +1,21 @@
+---
+// Pagina di prova (solo offline / area di prova): animazione MicroTrack in vista 3D a 3/4.
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Animazione3D from '../../components/microtrack/Animazione3D.astro';
+---
+<Base
+  title="MicroTrack in 3D (prova) | I.D.S. Sicurezza"
+  description="Prova dell'animazione MicroTrack in vista 3D a tre quarti."
+>
+  <Header />
+  <main class="prova3d">
+    <h1>MicroTrack – vista 3D (prova)</h1>
+    <Animazione3D />
+  </main>
+</Base>
+
+<style>
+  .prova3d{width:100%;max-width:960px;margin:0 auto;padding:32px 20px 64px;box-sizing:border-box}
+  h1{font-family:var(--font-titoli, inherit);font-size:28px;margin:0 0 20px;color:#fff}
+</style>
