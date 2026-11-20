@@ -19,10 +19,10 @@ Le pagine Antintrusione, Perimetrali, Videosorveglianza, Chi siamo e Contatti er
 ## File da conservare al lancio
 
 - `google671c61b69101100e.html` – file di verifica di **Google Search Console** già esistente: va lasciato nella radice, così la proprietà resta verificata.
-- `progs/` – software scaricabili dai clienti: `Raptor.msi`, `RaptorDVRclient.exe`, `clientinstall.zip`, `29650_04_ADPRO_PRO_PIR_9.47_Software.zip`. Da decidere se servono ancora; se sì, gli indirizzi non devono cambiare.
-- `temp/evento29-10-19.mp4` – video di un evento del 29/10/2019 (40 MB). Da decidere.
+## Da non riportare nel nuovo sito
 
-## Da ignorare
+- `progs/` – vecchi software per i clienti (Raptor, ADPRO PIR): non più necessari (decisione del 20/11/2026).
+- `temp/evento29-10-19.mp4` – video dell'evento 2019: non più necessario (resta nel backup).
 
 - `._htaccess` – residuo di una vecchia installazione Drupal, non attivo (il nome non è `.htaccess`).
 - `index_htm_files/` – immagini e script generati da Xara.
