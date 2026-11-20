@@ -8,6 +8,8 @@ Documento di riferimento per il rinnovo del sito **impiantidisicurezza.it**. Sta
 - **Sede e stabilimento**: Zona Ind.le Piane di Morro, 63084 Folignano (AP), tel. 0736 390049 – 0736 491203.
 - **Uffici e logistica**: Via del Lavoro 1, 63076 Monteprandone (AP), tel. 0735 703473.
 - **E-mail**: info@impiantidisicurezza.it – P.IVA 02248560449.
+- **Autore dei contenuti**: Franz Xaver **Bössl** (con la dieresi, come nelle pubblicazioni). Dove la ö non è ammessa (indirizzi web, nomi file, metadati ASCII) si scrive **Boessl**: es. `/autore/franz-xaver-boessl/`.
+- **Pubblicazioni**: 5 articoli 2018–2019 su a&s Italy e secsolution magazine (cartella `Materiale grafico/Articoli e riviste`); il principale è *Tecniche riflettometriche per la protezione antintrusione* (a&s Italy n. 53, ott. 2018), firmato da Franz come R&D Manager di PIDS S.r.l.
 - **Hosting**: United Host. Il sito attuale è stato fatto con Magix Xara Web Designer e va sostituito.
 - **Obiettivo**: un sito articolato su più livelli. Chi cerca poche informazioni le trova subito; chi vuole approfondire trova contenuti tecnici, soluzioni particolari e non convenzionali. Il sito include un blog.
 
