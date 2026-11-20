@@ -193,7 +193,7 @@ const passi = [
       tacca.setAttribute('stroke', '#FFFFFF'); tacca.setAttribute('stroke-width', '4');
       const et = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       et.setAttribute('x', String(a.x + nx * 31)); et.setAttribute('y', String(a.y + ny * 31 + 5));
-      et.setAttribute('text-anchor', 'middle'); et.setAttribute('class', 'et piccolo forte');
+      et.setAttribute('text-anchor', 'middle'); et.setAttribute('fill', '#FFFFFF'); et.setAttribute('font-size', '15'); et.setAttribute('font-weight', '700'); et.setAttribute('font-family', 'Inter, Arial, sans-serif');
       et.textContent = `${m} m`;
       gMetri.append(tacca, et);
     });
