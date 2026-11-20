@@ -14,12 +14,12 @@ Documento di riferimento per il rinnovo del sito **impiantidisicurezza.it**. Sta
 ## 2. Identità visiva
 
 ### Logo
-- Usare sempre il **logo ufficiale**, mai ridisegnato.
-- `logo-ids-bianco.png` (+ `@2x`): versione bianca trasparente per fondi scuri.
-- `logo-ids-blu.png`: originale blu per fondi chiari.
-- `logo-ids-orizzontale-bianco.png` (+ `@2x`): logo orizzontale **senza vela**, per l'intestazione di tutte le pagine interne. Ricavato dal vecchio sito (`452.png`); versione blu `logo-ids-orizzontale-blu.png` per fondi chiari. Originali in `Z:\SITO WEB I.D.S\2026\Loghi`.
-- Regola: logo con vela solo sulla landing; logo orizzontale senza vela su tutte le altre pagine.
-- Il file ufficiale disponibile è piccolo (160 × 123 px): se esiste una versione vettoriale o più grande, va sostituita.
+- Usare sempre il **logo ufficiale**, mai ridisegnato. Dal 20/11/2026 il sito usa i **file vettoriali SVG** ricavati dagli originali Illustrator (PDF forniti da Franz), in `public/assets/marchio/`:
+  - `logo-ids-vela-bianco.svg` / `logo-ids-vela-blu.svg` – logo con vela (solo landing). Nella versione bianca la vela è al 30% di opacità, come nel logo storico per fondi scuri.
+  - `logo-ids-orizzontale-bianco.svg` / `logo-ids-orizzontale-blu.svg` – logo senza vela, per l'intestazione di tutte le pagine interne.
+  - `logo-ids-ingegnerie-vela-blu.svg` / `logo-ids-ingegnerie-blu.svg` – marchio storico "I.D.S. Ingegnerie di sicurezza": candidato per la linea dei sistemi proprietari / ad alta integrazione (da decidere).
+- Blu del logo vettoriale: `#1C2A50` (leggermente diverso dal `#002950` ricavato dai vecchi PNG).
+- I PNG precedenti (`logo-ids-bianco.png`, `logo-ids-orizzontale-*.png`) restano in `public/assets/` come riserva.
 
 ### Palette "blu acciaio"
 | Ruolo | Nome | Hex |
@@ -115,4 +115,3 @@ Ogni argomento può avere tre livelli: **In breve** (un minuto), **Come funziona
 4. Primi articoli del blog con l'esperienza di I.D.S. e foto reali degli impianti.
 5. Modulo contatti, pagina privacy e cookie.
 6. Lancio: contenuto di `/nuovo/` in radice, reindirizzamenti 301, Search Console.
-- Da reperire: versione vettoriale o ad alta risoluzione del logo.
