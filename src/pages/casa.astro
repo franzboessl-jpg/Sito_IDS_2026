@@ -1,0 +1,201 @@
+---
+// Casa e attività – tono semplice, organizzata per esigenze (vedi docs/IDS_sito_brief.md, §4)
+// I riquadri "Testo di Franz" e "Foto" sono segnaposto da sostituire con i contenuti definitivi.
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Segnaposto from '../components/Segnaposto.astro';
+import FotoSegnaposto from '../components/FotoSegnaposto.astro';
+import { AZIENDA, tel, url } from '../site';
+
+const esigenze = [
+  {
+    id: 'dormire-tranquilli',
+    titolo: 'Dormire tranquilli e partire sereni',
+    sottotitolo: 'Antintrusione con protezione esterna',
+    icona: 'M20 4 7 9v10c0 8.5 5.6 14.6 13 17 7.4-2.4 13-8.5 13-17V9Z M20 21.5V27',
+    cerchio: true,
+    foto: 'Casa di notte con sensori esterni e giardino illuminato',
+    testo: 'Perché proteggere prima l’esterno, cosa succede quando scatta l’allarme, come si vive l’impianto ogni giorno (inserimento, zone, animali in casa).',
+    link: [{ href: '/antintrusione/', label: 'Antintrusione' }],
+  },
+  {
+    id: 'casa-dal-telefono',
+    titolo: 'Vedere casa dal telefono',
+    sottotitolo: 'Videosorveglianza, notifiche, verifica video',
+    icona: 'M5 13 27 7l3 10-22 6ZM30 13l6-2v9l-6 1M14 22l2 7H6 M6 25v8',
+    foto: 'Smartphone con le immagini delle telecamere di casa',
+    testo: 'Cosa si vede dal telefono, quando arrivano le notifiche, come si verifica un allarme con le immagini, privacy delle registrazioni.',
+    link: [{ href: '/videosorveglianza/', label: 'Videosorveglianza' }],
+  },
+  {
+    id: 'casa-che-obbedisce',
+    titolo: 'La casa che obbedisce alla voce',
+    sottotitolo: 'Domotica: luci, clima, tapparelle, scenari',
+    icona: 'M5 19 20 6l15 13M9 16v18h22V16 M14.5 24.5a8 8 0 0 1 11 0M17 27.5a4 4 0 0 1 6 0',
+    foto: 'Soggiorno con luci e tapparelle comandate a voce',
+    testo: 'Esempi concreti di comandi vocali e scenari (“buonanotte”, “esco di casa”), integrazione con l’allarme, cosa serve in un impianto esistente.',
+    link: [{ href: '/domotica/', label: 'Domotica' }],
+  },
+  {
+    id: 'negozi-e-uffici',
+    titolo: 'Negozi e uffici',
+    sottotitolo: 'Allarme, telecamere, controllo accessi, antincendio, rete dati',
+    icona: 'M6 34V16l14-9 14 9v18Z M14 34V22h12v12 M6 16h28',
+    foto: 'Negozio o ufficio con impianto installato da I.D.S.',
+    testo: 'Le esigenze tipiche di un’attività: orari di apertura, dipendenti e badge, telecamere in regola con le norme sul lavoro, antincendio, rete dati affidabile.',
+    link: [
+      { href: '/controllo-accessi/', label: 'Controllo accessi' },
+      { href: '/antincendio/', label: 'Antincendio' },
+      { href: '/cablaggio-strutturato/', label: 'Cablaggio strutturato' },
+    ],
+  },
+];
+
+const fasi = [
+  { titolo: 'Sopralluogo', testo: 'Cosa guardiamo quando veniamo a vedere casa o il locale.' },
+  { titolo: 'Progetto', testo: 'Come nasce la proposta, cosa contiene il preventivo.' },
+  { titolo: 'Installazione', testo: 'Tempi, pulizia del lavoro, collaudo e spiegazione all’utente.' },
+  { titolo: 'Assistenza e manutenzione', testo: 'Controlli periodici, interventi, assistenza da remoto.' },
+];
+---
+<Base
+  title="Sicurezza per casa, negozi e uffici | I.D.S. Sicurezza"
+  description="Antifurto, videosorveglianza, domotica e impianti per negozi e uffici: soluzioni chiare e su misura, dal sopralluogo all'assistenza. I.D.S. Sicurezza, Folignano (AP), dal 1975."
+  image="/assets/casa.webp"
+>
+  <Header />
+
+  <main>
+    <section class="hero">
+      <img class="hero-foto" src={url('/assets/casa.webp')} alt="" width="1800" height="600" />
+      <div class="hero-testo">
+        <nav class="briciole" aria-label="Percorso"><a href={url('/')}>Home</a> › <span>Casa e attività</span></nav>
+        <h1>Casa e attività</h1>
+        <p class="sottotitolo">Soluzioni chiare, affidabili e su misura per abitazioni, negozi e uffici.</p>
+      </div>
+    </section>
+
+    <div class="chiaro">
+      <div class="contenuto">
+        <section class="intro">
+          <Segnaposto testo="Introduzione (3-4 righe): a chi si rivolge questa pagina e perché fidarsi di I.D.S. per la propria casa o attività." righe={3} />
+          <nav class="indice" aria-label="In questa pagina">
+            {esigenze.map((e) => <a href={`#${e.id}`}>{e.titolo}</a>)}
+            <a href="#come-lavoriamo">Come lavoriamo</a>
+          </nav>
+        </section>
+
+        {esigenze.map((e, i) => (
+          <section id={e.id} class:list={['esigenza', { inversa: i % 2 === 1 }]}>
+            <div class="media">
+              <FotoSegnaposto testo={e.foto} />
+            </div>
+            <div class="testo">
+              <p class="tema">
+                <svg viewBox="0 0 40 40" aria-hidden="true"><path d={e.icona} />{e.cerchio && <circle cx="20" cy="18" r="3.5" />}</svg>
+                {e.sottotitolo}
+              </p>
+              <h2>{e.titolo}</h2>
+              <Segnaposto testo={e.testo} righe={5} />
+              <p class="approfondisci">
+                Approfondisci: {e.link.map((l, j) => (<>{j > 0 && ' · '}<a href={url(l.href)}>{l.label}</a></>))}
+              </p>
+            </div>
+          </section>
+        ))}
+
+        <section id="come-lavoriamo" class="fasi-sezione">
+          <h2>Come lavoriamo</h2>
+          <ol class="fasi">
+            {fasi.map((f, i) => (
+              <li>
+                <span class="numero">{i + 1}</span>
+                <h3>{f.titolo}</h3>
+                <Segnaposto testo={f.testo} righe={3} />
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section id="lavori-realizzati" class="lavori">
+          <h2>Lavori realizzati</h2>
+          <Segnaposto testo="Due righe di presentazione dei lavori (tipo di clienti, zona in cui operiamo)." righe={2} />
+          <div class="galleria">
+            <FotoSegnaposto testo="Lavoro realizzato: abitazione" rapporto="3/2" />
+            <FotoSegnaposto testo="Lavoro realizzato: negozio" rapporto="3/2" />
+            <FotoSegnaposto testo="Lavoro realizzato: ufficio" rapporto="3/2" />
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <section class="contatti">
+      <h2>Contatti</h2>
+      <Segnaposto testo="Invito al contatto (1-2 righe): sopralluogo, preventivo, consulenza." righe={2} />
+      <div class="azioni">
+        <a class="pulsante" href={tel(AZIENDA.sede.telefoni[0])}>Chiama {AZIENDA.sede.telefoni[0]}</a>
+        <a class="pulsante secondario" href={`mailto:${AZIENDA.email}`}>Scrivi a {AZIENDA.email}</a>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  /* Testata scura con la foto della villa */
+  .hero{position:relative;width:min(1560px,95%);margin:24px auto 0;border-radius:18px;overflow:hidden;border:1px solid rgba(143,176,204,.45);min-height:clamp(260px,30vw,420px);display:flex;align-items:flex-end}
+  .hero-foto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,26,46,.88) 0%,rgba(10,26,46,.55) 45%,rgba(10,26,46,.05) 75%),linear-gradient(0deg,rgba(10,26,46,.6),transparent 50%)}
+  .hero-testo{position:relative;z-index:1;padding:clamp(22px,4vw,48px);max-width:720px}
+  .briciole{font-size:14px;color:var(--chiaro);margin-bottom:10px}
+  .briciole a{color:var(--chiaro);text-decoration:none}
+  .briciole a:hover{color:#fff;text-decoration:underline}
+  h1{margin:0 0 10px;font-size:clamp(32px,4vw,52px);line-height:1.1;color:#fff}
+  .sottotitolo{margin:0;font-family:var(--font-testo);font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ghiaccio)}
+
+  /* Corpo chiaro: le sezioni "Casa" usano i toni chiari della palette */
+  .chiaro{position:relative;margin-top:-60px;padding-top:60px;background:var(--ghiaccio);color:var(--grafite)}
+  .hero{z-index:1}
+  .contenuto{width:min(1200px,92%);margin:0 auto;padding:48px 0 64px}
+  .chiaro h2{margin:0 0 14px;font-size:clamp(26px,2.6vw,36px);line-height:1.2;color:var(--logo)}
+  .chiaro h3{margin:0 0 10px;font-size:clamp(19px,1.6vw,22px);color:var(--acciaio-scuro)}
+
+  .intro{display:grid;gap:18px;margin-bottom:56px}
+  .indice{display:flex;flex-wrap:wrap;gap:10px}
+  .indice a{padding:9px 16px;border-radius:999px;border:1px solid #9DB3C8;background:#fff;color:var(--logo);font-weight:600;font-size:15px;text-decoration:none;transition:border-color .3s ease,background .3s ease}
+  .indice a:hover,.indice a:focus-visible{border-color:var(--acciaio);background:#F4F8FB}
+
+  .esigenza{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,56px);align-items:center;padding:40px 0;border-top:1px solid #C9D7E4;scroll-margin-top:20px}
+  .esigenza.inversa .media{order:2}
+  .tema{display:flex;align-items:center;gap:10px;margin:0 0 8px;font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--acciaio)}
+  .tema svg{flex:none;width:30px;height:30px;stroke:var(--acciaio);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .approfondisci{margin:14px 0 0;font-family:var(--font-testo);font-size:16px;color:var(--acciaio-scuro)}
+  .approfondisci a{color:#1F5FA8;font-weight:600}
+
+  .fasi-sezione{padding:48px 0 8px;border-top:1px solid #C9D7E4;scroll-margin-top:20px}
+  .fasi{list-style:none;margin:20px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+  .fasi li{background:#fff;border:1px solid #C9D7E4;border-radius:14px;padding:20px}
+  .numero{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;margin-bottom:10px;border-radius:50%;background:var(--logo);color:#fff;font-weight:700}
+
+  .lavori{padding:48px 0 0;border-top:1px solid #C9D7E4;margin-top:40px;display:grid;gap:18px}
+  .galleria{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+
+  /* Fascia contatti scura */
+  .contatti{position:relative;width:min(1200px,92%);margin:0 auto;padding:56px 0 64px;display:grid;gap:18px;justify-items:start}
+  .contatti h2{margin:0;font-size:clamp(26px,2.6vw,36px);color:#fff}
+  .azioni{display:flex;flex-wrap:wrap;gap:12px}
+  .pulsante{display:inline-block;padding:14px 22px;border-radius:12px;background:var(--luminoso);color:#fff;font-weight:600;text-decoration:none;transition:background .3s ease}
+  .pulsante:hover,.pulsante:focus-visible{background:#3C7EC4}
+  .pulsante.secondario{background:transparent;border:1px solid var(--chiaro)}
+  .pulsante.secondario:hover{background:rgba(74,144,217,.15)}
+
+  @media (max-width:900px){
+    .esigenza{grid-template-columns:1fr}
+    .esigenza.inversa .media{order:0}
+    .fasi{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .galleria{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:560px){
+    .fasi,.galleria{grid-template-columns:1fr}
+    .hero:after{background:linear-gradient(0deg,rgba(10,26,46,.9) 10%,rgba(10,26,46,.25) 80%)}
+  }
+</style>

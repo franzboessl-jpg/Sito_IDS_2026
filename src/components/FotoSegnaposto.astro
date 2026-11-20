@@ -1,0 +1,14 @@
+---
+// Riquadro al posto di una foto non ancora scelta
+interface Props { testo: string; rapporto?: string }
+const { testo, rapporto = '4/3' } = Astro.props;
+---
+<div class="foto-segnaposto" style={`aspect-ratio:${rapporto}`}>
+  <span>Foto</span>
+  <p>{testo}</p>
+</div>
+<style>
+  .foto-segnaposto{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;border:2px dashed #7A93AB;border-radius:14px;background:#D3E0EC;color:#2E4A66;text-align:center;padding:16px;font-family:var(--font-testo);font-size:15px}
+  span{font-family:var(--font-titoli);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+  p{margin:0;max-width:34ch}
+</style>

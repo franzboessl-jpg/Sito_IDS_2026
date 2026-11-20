@@ -1,0 +1,14 @@
+---
+// Segnaposto ben visibile per i testi che scriverà Franz. Da rimuovere quando il testo è inserito.
+interface Props { testo: string; righe?: number }
+const { testo, righe = 3 } = Astro.props;
+---
+<div class="segnaposto" style={`--righe:${righe}`}>
+  <span class="etichetta">Testo di Franz</span>
+  <p>{testo}</p>
+</div>
+<style>
+  .segnaposto{position:relative;border:2px dashed #C27C0E;background:repeating-linear-gradient(135deg,#FFF6E5 0 14px,#FDEFD3 14px 28px);border-radius:10px;padding:14px 16px;min-height:calc(var(--righe) * 1.6em + 28px);color:#6B4200;font-family:var(--font-testo);font-size:15px;line-height:1.5}
+  .etichetta{display:inline-block;margin-bottom:4px;font-family:var(--font-titoli);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8A5300}
+  p{margin:0}
+</style>
