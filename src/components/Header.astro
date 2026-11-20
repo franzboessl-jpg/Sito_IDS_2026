@@ -4,7 +4,7 @@ import { url } from '../site';
 ---
 <header class="header">
   <a class="logo" href={url('/')} aria-label="I.D.S. Sicurezza, pagina iniziale">
-    <img src={url('/assets/logo-ids-bianco.png')} srcset={`${url('/assets/logo-ids-bianco.png')} 1x, ${url('/assets/logo-ids-bianco@2x.png')} 2x`} width="160" height="123" alt="I.D.S. Sicurezza" />
+    <img src={url('/assets/logo-ids-orizzontale-bianco.png')} srcset={`${url('/assets/logo-ids-orizzontale-bianco.png')} 1x, ${url('/assets/logo-ids-orizzontale-bianco@2x.png')} 2x`} width="151" height="44" alt="I.D.S. Sicurezza" />
   </a>
   <nav aria-label="Menu principale">
     <a href={url('/casa/')}>Casa e attività</a>
@@ -14,10 +14,10 @@ import { url } from '../site';
 </header>
 
 <style>
-  .header{position:relative;width:min(1560px,95%);margin:0 auto;padding:16px 0;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid rgba(143,176,204,.3)}
-  .logo img{display:block;height:76px;width:auto}
+  .header{position:relative;width:min(1560px,95%);margin:0 auto;padding:22px 0;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid rgba(143,176,204,.3)}
+  .logo img{display:block;height:44px;width:auto}
   nav{display:flex;flex-wrap:wrap;gap:6px 26px}
   nav a{color:var(--ghiaccio);text-decoration:none;font-weight:600;font-size:16px}
   nav a:hover,nav a:focus-visible{color:#fff;text-decoration:underline;text-underline-offset:6px}
-  @media (max-width:600px){.logo img{height:52px}nav{gap:4px 14px}nav a{font-size:14px}}
+  @media (max-width:600px){.logo img{height:34px}nav{gap:4px 14px}nav a{font-size:14px}}
 </style>

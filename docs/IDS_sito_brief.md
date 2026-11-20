@@ -17,6 +17,8 @@ Documento di riferimento per il rinnovo del sito **impiantidisicurezza.it**. Sta
 - Usare sempre il **logo ufficiale**, mai ridisegnato.
 - `logo-ids-bianco.png` (+ `@2x`): versione bianca trasparente per fondi scuri.
 - `logo-ids-blu.png`: originale blu per fondi chiari.
+- `logo-ids-orizzontale-bianco.png` (+ `@2x`): logo orizzontale **senza vela**, per l'intestazione delle pagine interne (dalla landing in giù). Ricavato dal vecchio sito (`452.png`); versione blu `logo-ids-orizzontale-blu.png` per fondi chiari. Originali in `Z:\SITO WEB I.D.S\2026\Loghi`.
+- Regola: logo con vela solo sulla landing; logo orizzontale senza vela su tutte le altre pagine.
 - Il file ufficiale disponibile è piccolo (160 × 123 px): se esiste una versione vettoriale o più grande, va sostituita.
 
 ### Palette "blu acciaio"
