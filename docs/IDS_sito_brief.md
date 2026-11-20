@@ -17,7 +17,7 @@ Documento di riferimento per il rinnovo del sito **impiantidisicurezza.it**. Sta
 - Usare sempre il **logo ufficiale**, mai ridisegnato.
 - `logo-ids-bianco.png` (+ `@2x`): versione bianca trasparente per fondi scuri.
 - `logo-ids-blu.png`: originale blu per fondi chiari.
-- `logo-ids-orizzontale-bianco.png` (+ `@2x`): logo orizzontale **senza vela**, per l'intestazione delle pagine interne (dalla landing in giù). Ricavato dal vecchio sito (`452.png`); versione blu `logo-ids-orizzontale-blu.png` per fondi chiari. Originali in `Z:\SITO WEB I.D.S\2026\Loghi`.
+- `logo-ids-orizzontale-bianco.png` (+ `@2x`): logo orizzontale **senza vela**, per l'intestazione di tutte le pagine interne. Ricavato dal vecchio sito (`452.png`); versione blu `logo-ids-orizzontale-blu.png` per fondi chiari. Originali in `Z:\SITO WEB I.D.S\2026\Loghi`.
 - Regola: logo con vela solo sulla landing; logo orizzontale senza vela su tutte le altre pagine.
 - Il file ufficiale disponibile è piccolo (160 × 123 px): se esiste una versione vettoriale o più grande, va sostituita.
 
@@ -109,8 +109,8 @@ Ogni argomento può avere tre livelli: **In breve** (un minuto), **Come funziona
 - **Originali delle foto**: restano su `Z:\SITO WEB I.D.S\2026`; nel repository solo le versioni WebP ottimizzate.
 
 ## 7. Prossimi passi
-1. Backup del vecchio sito (`httpdocs`) prima di qualunque modifica.
-2. Pubblicazione automatica GitHub → area di prova `/nuovo/`.
+1. ✅ Backup del vecchio sito (20/11/2026) – vedi `docs/migrazione_vecchio_sito.md`.
+2. ✅ Pubblicazione automatica GitHub → area di prova `/nuovo/` (utente FTP `deploy_prova` limitato a `/httpdocs/nuovo`, lftp su FTPS).
 3. Pagina **Casa e attività**, poi **Sistemi avanzati**, poi le sei pagine tecnologia.
 4. Primi articoli del blog con l'esperienza di I.D.S. e foto reali degli impianti.
 5. Modulo contatti, pagina privacy e cookie.
