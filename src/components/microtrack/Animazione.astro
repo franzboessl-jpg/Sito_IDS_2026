@@ -23,7 +23,7 @@ const passi = [
 <figure class="animazione" data-mt-anim data-soglie={JSON.stringify(soglie)}>
   <div class="scorri"><svg viewBox="0 0 900 640" role="img" aria-labelledby="mt-anim-titolo mt-anim-desc">
     <title id="mt-anim-titolo">Come MicroTrack distingue un animale da una persona</title>
-    <desc id="mt-anim-desc">Pianta dall'alto di un'abitazione con il campo di rilevazione lungo tutto il perimetro, diviso in sottocelle da 2 metri. Sotto, il grafico del segnale di ogni sottocella con la soglia di allarme di ogni tratto, che varia con il terreno. Un gatto attraversa il perimetro: il segnale resta sotto la soglia e non scatta nulla. Poi una persona attraversa: il segnale supera la soglia, scatta l'allarme e il sistema indica il punto esatto in metri.</desc>
+    <desc id="mt-anim-desc">Pianta dall'alto di un'abitazione con il campo di rilevazione lungo tutto il perimetro, diviso in sottocelle da 2 metri. Sotto, il grafico del segnale di ogni sottocella con la soglia di allarme di ogni tratto, che varia con il terreno. Un gatto attraversa il perimetro: il segnale resta sotto la soglia e non scatta nulla. Poi una persona attraversa: il segnale supera la soglia, scatta l'allarme, il sistema indica il punto esatto in metri e la telecamera PTZ ruota per inquadrare l'intruso.</desc>
 
     <!-- Legenda -->
     <g class="legenda" transform="translate(40 30)">
@@ -33,6 +33,8 @@ const passi = [
       <text x="248" y="0">cavi interrati</text>
       <rect x="380" y="-11" width="3" height="14" fill="#fff" fill-opacity=".7" />
       <text x="391" y="0">divisione tra sottocelle (2 m)</text>
+      <circle cx="660" cy="-4" r="7" fill="#0A1A2E" stroke="#E3ECF4" stroke-width="2.5" />
+      <text x="674" y="0">telecamera PTZ</text>
     </g>
 
     <!-- Pianta -->
@@ -42,19 +44,37 @@ const passi = [
     <g fill="#1F4D38" stroke="#2C6A4C" stroke-width="2">
       <circle cx="215" cy="190" r="26" /><circle cx="250" cy="335" r="20" /><circle cx="690" cy="345" r="24" />
     </g>
-    <!-- abitazione -->
+    <!-- abitazione (ridotta) -->
     <g>
-      <rect x="320" y="185" width="270" height="150" rx="6" fill="#2A3F55" stroke="#8FB0CC" stroke-width="2" />
-      <path d="M320 185 L455 260 L590 185 M320 335 L455 260 L590 335" stroke="#8FB0CC" stroke-width="1.5" fill="none" opacity=".6" />
-      <text x="455" y="365" text-anchor="middle" class="et">abitazione</text>
+      <rect x="380" y="215" width="160" height="96" rx="5" fill="#2A3F55" stroke="#8FB0CC" stroke-width="2" />
+      <path d="M380 215 L460 263 L540 215 M380 311 L460 263 L540 311" stroke="#8FB0CC" stroke-width="1.5" fill="none" opacity=".6" />
+      <text x="460" y="334" text-anchor="middle" class="et piccolo">abitazione</text>
     </g>
     <!-- processore -->
-    <line x1="590" y1="300" x2="750" y2="300" stroke="#8FB0CC" stroke-width="2" stroke-dasharray="6 5" />
-    <rect x="606" y="282" width="56" height="34" rx="4" fill="#0A1A2E" stroke="#8FB0CC" stroke-width="2" />
-    <text x="634" y="304" text-anchor="middle" class="et piccolo">MTP</text>
-    <text x="634" y="335" text-anchor="middle" class="et piccolo">processore</text>
+    <line x1="540" y1="290" x2="750" y2="290" stroke="#8FB0CC" stroke-width="2" stroke-dasharray="6 5" />
+    <rect x="604" y="273" width="56" height="34" rx="4" fill="#0A1A2E" stroke="#8FB0CC" stroke-width="2" />
+    <text x="632" y="295" text-anchor="middle" class="et piccolo">MTP</text>
+    <text x="632" y="326" text-anchor="middle" class="et piccolo">processore</text>
 
+    <!-- telecamera PTZ: ronda lenta, all'allarme si orienta sull'intruso -->
+    <g transform="translate(655 205)">
+      <g data-ptz>
+        <path d="M0 0 L150 -46 Q160 0 150 46 Z" fill="url(#mt-cono)" data-cono />
+        <rect x="-4" y="-7" width="24" height="14" rx="3" fill="#E3ECF4" />
+        <rect x="18" y="-5" width="5" height="10" rx="1.5" fill="#0A1A2E" />
+      </g>
+      <circle r="8" fill="#0A1A2E" stroke="#E3ECF4" stroke-width="2.5" />
+      <text x="0" y="30" text-anchor="middle" class="et piccolo">PTZ</text>
+    </g>
     <!-- campo, sottocelle, cavi, evidenze -->
+    <defs>
+      <linearGradient id="mt-cono" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0" stop-color="#FFE08A" stop-opacity=".55" /><stop offset="1" stop-color="#FFE08A" stop-opacity="0" />
+      </linearGradient>
+      <linearGradient id="mt-cono-allarme" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0" stop-color="#FF7B6B" stop-opacity=".7" /><stop offset="1" stop-color="#FF7B6B" stop-opacity=".05" />
+      </linearGradient>
+    </defs>
     <defs><path id="mt-percorso" data-percorso d="M190 100 H710 A40 40 0 0 1 750 140 V360 A40 40 0 0 1 710 400 H190 A40 40 0 0 1 150 360 V140 A40 40 0 0 1 190 100 Z" /></defs>
     <use href="#mt-percorso" fill="none" stroke="#4A90D9" stroke-opacity=".38" stroke-width="34" />
     <use href="#mt-percorso" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="34" data-celle />
@@ -78,8 +98,8 @@ const passi = [
     <g data-allarme opacity="0">
       <circle r="22" fill="none" stroke="#E24C3B" stroke-width="3" data-onda />
       <g data-etichetta>
-        <rect x="34" y="24" width="192" height="30" rx="6" fill="#E24C3B" />
-        <text x="130" y="44" text-anchor="middle" class="et forte" data-testo-allarme>ALLARME · 0 m</text>
+        <rect x="-226" y="24" width="192" height="30" rx="6" fill="#E24C3B" />
+        <text x="-130" y="44" text-anchor="middle" class="et forte" data-testo-allarme>ALLARME · 0 m</text>
       </g>
     </g>
 
@@ -161,6 +181,9 @@ const passi = [
     const allarme = q<SVGGElement>('[data-allarme]'), onda = q<SVGCircleElement>('[data-onda]');
     q<SVGTextElement>('[data-testo-allarme]').textContent = `ALLARME · ${metriPersona} m`;
     allarme.setAttribute('transform', `translate(${pAllarme.x} ${pAllarme.y})`);
+    const ptz = q<SVGGElement>('[data-ptz]'), cono = q<SVGPathElement>('[data-cono]');
+    const PTZ = { x: 655, y: 205 };
+    const ronda = (t: number) => -150 + 35 * Math.sin(t * 0.7);
     const stato = q<HTMLElement>('[data-stato]');
     const pulsanti = [...box.querySelectorAll<HTMLButtonElement>('[data-vai]')];
     const pausa = q<HTMLButtonElement>('[data-pausa]');
@@ -203,6 +226,18 @@ const passi = [
       evAnimale.setAttribute('stroke-opacity', String(0.75 * segGatto));
       evPersona.setAttribute('stroke-opacity', inAllarme ? String(0.65 + 0.3 * Math.sin(t * 6)) : '0');
       allarme.setAttribute('opacity', inAllarme ? '1' : '0');
+      // PTZ: in allarme ruota (0,8 s) verso l'intruso e lo segue; poi torna alla ronda
+      let ang = ronda(t);
+      if (inAllarme) {
+        const bersaglio = Math.atan2(py - PTZ.y, 520 - PTZ.x) * 180 / Math.PI;
+        const k = fra(t, 8.8, 9.6), e = k * k * (3 - 2 * k);
+        ang = ronda(8.8) + (bersaglio - ronda(8.8)) * e;
+      } else if (t >= 15.4) {
+        const k = fra(t, 15.4, 16), e = k * k * (3 - 2 * k);
+        ang = -140 + (ronda(t) + 140) * e;
+      }
+      ptz.setAttribute('transform', `rotate(${ang})`);
+      cono.setAttribute('fill', inAllarme ? 'url(#mt-cono-allarme)' : 'url(#mt-cono)');
       const fase = (t * 0.9) % 1;
       onda.setAttribute('r', String(18 + fase * 26));
       onda.setAttribute('stroke-opacity', String(1 - fase));
@@ -211,7 +246,7 @@ const passi = [
       let passo = 0;
       if (t >= 2 && t < 6.6) { passo = 1; testo = 'Un piccolo animale attraversa: il segnale sale ma resta sotto la soglia di quel tratto, nessun allarme.'; }
       else if (t >= 6.6 && t < 8.8) { passo = 2; testo = 'Una persona si avvicina al perimetro…'; }
-      else if (inAllarme) { passo = t < 10.5 ? 2 : 3; testo = `Allarme: il segnale supera la soglia di quel tratto. Intrusione localizzata a ${metriPersona} m lungo il perimetro.`; }
+      else if (inAllarme) { passo = t < 10.5 ? 2 : 3; testo = `Allarme: il segnale supera la soglia di quel tratto. Intrusione localizzata a ${metriPersona} m lungo il perimetro: la telecamera PTZ si orienta sul punto e segue l’intruso.`; }
       if (stato.textContent !== testo) stato.textContent = testo;
       stato.classList.toggle('rosso', inAllarme);
       pulsanti.forEach((p, i) => p.setAttribute('aria-pressed', String(i === passo)));
