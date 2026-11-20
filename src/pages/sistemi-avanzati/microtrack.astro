@@ -47,7 +47,7 @@ const impieghi = [
           <a href={url('/')}>Home</a> › <a href={url('/sistemi-avanzati/')}>Sistemi avanzati</a> › <span>MicroTrack</span>
         </nav>
         <p class="sopratitolo">Protezione perimetrale interrata</p>
-        <h1>MicroTrack</h1>
+        <h1 class="titolo-logo"><img src={url(F + 'logo-intrepid-microtrack-ii.png')} alt="INTREPID MicroTrack II" width="900" height="60" /></h1>
         <p class="sottotitolo">Un campo di rilevazione invisibile sotto il prato, il vialetto o il piazzale.</p>
       </div>
     </section>
@@ -182,6 +182,8 @@ const impieghi = [
   .hero-destra .hero-foto{object-position:center 88%}
   .hero-destra:after{background:linear-gradient(270deg,rgba(10,26,46,.92) 0%,rgba(10,26,46,.6) 38%,rgba(10,26,46,0) 62%),linear-gradient(0deg,rgba(10,26,46,.45),transparent 40%)}
   .hero-destra .hero-testo{max-width:560px}
+  .titolo-logo{margin:6px 0 14px;display:inline-block;background:#fff;border-radius:10px;padding:12px 18px;line-height:0;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+  .titolo-logo img{display:block;width:min(440px,72vw);height:auto}
   .hero-credito{position:absolute;left:14px;bottom:10px;z-index:1;margin:0;font-family:var(--font-testo);font-size:12px;color:rgba(227,236,244,.85)}
   .briciole{font-family:var(--font-testo);font-size:14px;color:var(--chiaro);margin-bottom:12px}
   .briciole a{color:var(--chiaro);text-decoration:none}
