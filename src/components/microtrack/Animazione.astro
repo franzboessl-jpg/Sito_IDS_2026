@@ -90,12 +90,14 @@ const passi = [
         <stop offset="0" stop-color="#FF7B6B" stop-opacity=".6" /><stop offset="1" stop-color="#FF7B6B" stop-opacity=".05" />
       </radialGradient>
     </defs>
-    <defs><path id="mt-percorso" data-percorso d="M190 100 H710 A40 40 0 0 1 750 140 V360 A40 40 0 0 1 710 400 H190 A40 40 0 0 1 150 360 V140 A40 40 0 0 1 190 100 Z" /></defs>
+    <defs><path id="mt-percorso" data-percorso d="M710 400 H190 A40 40 0 0 1 150 360 V140 A40 40 0 0 1 190 100 H710 A40 40 0 0 1 750 140 V360 A40 40 0 0 1 710 400 Z" /></defs>
     <use href="#mt-percorso" fill="none" stroke="#4A90D9" stroke-opacity=".38" stroke-width="34" />
     <use href="#mt-percorso" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="34" data-celle />
     <use href="#mt-percorso" fill="none" stroke="#FFC20E" stroke-width="38" stroke-opacity="0" data-evid-animale />
     <use href="#mt-percorso" fill="none" stroke="#E24C3B" stroke-width="40" stroke-opacity="0" data-evid-persona />
     <use href="#mt-percorso" fill="none" stroke="#E24C3B" stroke-width="3" />
+    <!-- progressive in metri lungo il perimetro, le stesse dell'asse del grafico -->
+    <g data-metri></g>
 
     <!-- gatto (vista dall'alto) -->
     <g data-gatto opacity="0">
@@ -178,6 +180,23 @@ const passi = [
       return el;
     };
     const evAnimale = evid('[data-evid-animale]', iGatto);
+    // progressive 0 / 30 / 60 / 90 m sul perimetro (stesso riferimento dell'asse del grafico)
+    const gMetri = q<SVGGElement>('[data-metri]');
+    [0, 30, 60, 90].forEach((m) => {
+      const s0 = (m / METRI) * L;
+      const a = percorso.getPointAtLength(s0), b = percorso.getPointAtLength((s0 + 1) % L);
+      const tx = b.x - a.x, ty = b.y - a.y, n = Math.hypot(tx, ty) || 1;
+      const nx = ty / n, ny = -tx / n; // normale verso l'esterno (percorso in senso orario sullo schermo)
+      const tacca = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      tacca.setAttribute('x1', String(a.x - nx * 19)); tacca.setAttribute('y1', String(a.y - ny * 19));
+      tacca.setAttribute('x2', String(a.x + nx * 19)); tacca.setAttribute('y2', String(a.y + ny * 19));
+      tacca.setAttribute('stroke', '#FFFFFF'); tacca.setAttribute('stroke-width', '4');
+      const et = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      et.setAttribute('x', String(a.x + nx * 31)); et.setAttribute('y', String(a.y + ny * 31 + 5));
+      et.setAttribute('text-anchor', 'middle'); et.setAttribute('class', 'et piccolo forte');
+      et.textContent = `${m} m`;
+      gMetri.append(tacca, et);
+    });
     const evPersona = evid('[data-evid-persona]', iPersona);
 
     // barre del grafico
