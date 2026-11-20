@@ -53,6 +53,8 @@ Regola: sezioni "Casa" verso i toni chiari della scala, sezioni tecniche e difes
 - Le foto si generano con ChatGPT o Google Flow (Nano Banana); le correzioni di colore, luce, ritaglio e peso le fa Claude, così il contenuto non cambia.
 - Ogni foto nuova va **equalizzata sui toni della villa** (`casa.webp`) per restare coerente.
 - Formato per il web: WebP, circa 1800 px di larghezza.
+- **Filigrana** (decisione del 20/11/2026): tutte le foto e le immagini **di I.D.S.** pubblicate nel sito portano il logo I.D.S. senza vela, bianco semitrasparente con ombra leggera, in basso a destra (circa 13% della larghezza), più il copyright nei metadati. Si applica con `scripts/foto_web.py`. Niente filigrana sul materiale di terzi (Southwest, produttori, stock). Gli originali senza filigrana restano su Z:.
+- **Catalogo foto**: foglio "Catalogo foto – sito I.D.S. 2026" (Claude Sheets) con le 388 immagini di Materiale grafico, pagina proposta, avvertenze e colonna Approvata.
 
 ## 3. Landing page (definita)
 
