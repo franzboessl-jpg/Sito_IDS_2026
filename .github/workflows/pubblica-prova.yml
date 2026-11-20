@@ -44,4 +44,4 @@ jobs:
 
       - name: Avviso credenziali mancanti
         if: env.FTP_SERVER == ''
-        run: echo "::warning::Secrets FTP non ancora impostati: il sito è stato compilato ma non caricato."
+        run: 'echo "::warning::Secrets FTP non ancora impostati, il sito è stato compilato ma non caricato."'
