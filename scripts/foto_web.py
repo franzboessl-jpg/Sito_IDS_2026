@@ -38,7 +38,7 @@ def filigrana(im, quota=0.13, opacita=0.55, margine=0.025):
     base.alpha_composite(lg, (x, y))
     return base.convert('RGB')
 
-def filigrana_centro(im, quota=0.42, opacita=0.22):
+def filigrana_centro(im, quota=0.42, opacita=0.15):
     """Logo grande e tenue al centro: per toglierlo bisogna rovinare la foto."""
     w, h = im.size
     lw = int(min(w * quota, h * 1.1))
@@ -68,7 +68,7 @@ def filigrana_trama(im, quota=0.16, opacita=0.10, angolo=-24):
 
 def applica(im, modo):
     if modo == 'angolo': return filigrana(im)
-    if modo == 'centro': return filigrana(filigrana_centro(im), quota=0.10, opacita=0.45)
+    if modo == "centro": return filigrana(filigrana_centro(im), quota=0.10, opacita=0.38)
     if modo == 'trama': return filigrana(filigrana_trama(im), quota=0.10, opacita=0.45)
     return im
 
