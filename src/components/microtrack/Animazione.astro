@@ -4,6 +4,15 @@
 // (sopra soglia) → allarme localizzato in metri. Pulsanti per i passi e pausa (WCAG 2.2.2);
 // con "riduci animazioni" parte ferma sul passo dell'allarme.
 // Valori didattici coerenti con la scheda tecnica: sottocelle di 2 m (60 sottocelle = 120 m di perimetro).
+// Soglia di allarme per sottocella: non è una retta, perché dipende dalla trasmissività del terreno
+// in quel tratto (la taratura con la camminata di calibrazione la fissa sottocella per sottocella).
+const N = 60, X0 = 60, LARGH = 780, BASE = 590, ALT = 120;
+const soglie = Array.from({ length: N }, (_, i) =>
+  +(0.55 + 0.12 * Math.sin(i * 0.33) + 0.07 * Math.sin(i * 1.1 + 1.3) + 0.03 * Math.sin(i * 2.7)).toFixed(3));
+const w = LARGH / N;
+const pathSoglia = soglie.map((v, i) => `${i === 0 ? 'M' : 'H'}${X0 + i * w} ${i === 0 ? '' : 'V'}${(BASE - v * ALT).toFixed(1)}`).join(' ')
+  .replace(/^M(\S+) V/, 'M$1 ') + ` H${X0 + LARGH}`;
+const yEtichetta = BASE - Math.max(...soglie.slice(36)) * ALT - 8;
 const passi = [
   { t: 0, fermo: 0, titolo: 'Campo attivo' },
   { t: 2, fermo: 4, titolo: 'Passa un animale' },
@@ -11,10 +20,10 @@ const passi = [
   { t: 10.5, fermo: 11, titolo: 'Allarme localizzato' },
 ];
 ---
-<figure class="animazione" data-mt-anim>
+<figure class="animazione" data-mt-anim data-soglie={JSON.stringify(soglie)}>
   <div class="scorri"><svg viewBox="0 0 900 640" role="img" aria-labelledby="mt-anim-titolo mt-anim-desc">
     <title id="mt-anim-titolo">Come MicroTrack distingue un animale da una persona</title>
-    <desc id="mt-anim-desc">Pianta dall'alto di un'abitazione con il campo di rilevazione lungo tutto il perimetro, diviso in sottocelle da 2 metri. Sotto, il grafico del segnale di ogni sottocella con la soglia di allarme. Un gatto attraversa il perimetro: il segnale resta sotto la soglia e non scatta nulla. Poi una persona attraversa: il segnale supera la soglia, scatta l'allarme e il sistema indica il punto esatto in metri.</desc>
+    <desc id="mt-anim-desc">Pianta dall'alto di un'abitazione con il campo di rilevazione lungo tutto il perimetro, diviso in sottocelle da 2 metri. Sotto, il grafico del segnale di ogni sottocella con la soglia di allarme di ogni tratto, che varia con il terreno. Un gatto attraversa il perimetro: il segnale resta sotto la soglia e non scatta nulla. Poi una persona attraversa: il segnale supera la soglia, scatta l'allarme e il sistema indica il punto esatto in metri.</desc>
 
     <!-- Legenda -->
     <g class="legenda" transform="translate(40 30)">
@@ -80,8 +89,8 @@ const passi = [
       <line x1="60" y1="590" x2="840" y2="590" stroke="#8FB0CC" stroke-width="1.5" />
       <line x1="60" y1="470" x2="60" y2="590" stroke="#8FB0CC" stroke-width="1.5" />
       <g data-barre></g>
-      <line x1="60" y1="525" x2="840" y2="525" stroke="#E24C3B" stroke-width="2" stroke-dasharray="8 6" />
-      <text x="836" y="517" text-anchor="end" class="et piccolo rosso">soglia di allarme</text>
+      <path d={pathSoglia} fill="none" stroke="#E24C3B" stroke-width="2.5" stroke-linejoin="round" />
+      <text x="836" y={yEtichetta} text-anchor="end" class="et piccolo rosso">soglia di allarme specifica del terreno</text>
       <g class="et piccolo" text-anchor="middle">
         <text x="60" y="608">0</text><text x="255" y="608">30</text><text x="450" y="608">60</text><text x="645" y="608">90</text><text x="840" y="608">120</text>
       </g>
@@ -101,10 +110,11 @@ const passi = [
 
 <script>
   const DURATA = 16, N = 60, METRI = 120;
-  const X0 = 60, LARGH = 780, BASE = 590, SOGLIA = 525;
+  const X0 = 60, LARGH = 780, BASE = 590;
 
   document.querySelectorAll<HTMLElement>('[data-mt-anim]').forEach((box) => {
     const q = <T extends Element>(s: string) => box.querySelector(s) as T;
+    const soglie: number[] = JSON.parse(box.dataset.soglie || '[]');
     const percorso = q<SVGPathElement>('[data-percorso]');
     const L = percorso.getTotalLength();
     const cella = L / N;
@@ -178,11 +188,11 @@ const passi = [
       barre.forEach((b, i) => {
         let v = 0.12 + 0.08 * rumore[i] * (0.6 + 0.4 * Math.sin(t * 3 + i));
         let colore = '#4A90D9';
-        if (i === iGatto) { v += 0.42 * segGatto; if (segGatto > 0.05) colore = '#E8A33D'; }
+        if (i === iGatto) { v += (0.8 * soglie[i] - v) * segGatto; if (segGatto > 0.05) colore = '#E8A33D'; }
         if (Math.abs(i - iPersona) <= 1) {
-          const k = i === iPersona ? 1.35 : 0.45;
-          v += k * segPersona;
-          if (inAllarme && i === iPersona) { v = Math.max(v, 0.72 + 0.05 * Math.sin(t * 6)); colore = '#E24C3B'; }
+          const k = i === iPersona ? 1.3 : 0.45;
+          v += k * soglie[i] * segPersona;
+          if (inAllarme && i === iPersona) { v = Math.max(v, soglie[i] + 0.12 + 0.04 * Math.sin(t * 6)); colore = '#E24C3B'; }
         }
         const h = Math.min(1, v) * 120;
         b.setAttribute('y', String(BASE - h));
@@ -199,9 +209,9 @@ const passi = [
 
       let testo = 'Campo attivo: il perimetro è sorvegliato, nessun segnale supera la soglia.';
       let passo = 0;
-      if (t >= 2 && t < 6.6) { passo = 1; testo = 'Un piccolo animale attraversa: il segnale sale ma resta sotto la soglia, nessun allarme.'; }
+      if (t >= 2 && t < 6.6) { passo = 1; testo = 'Un piccolo animale attraversa: il segnale sale ma resta sotto la soglia di quel tratto, nessun allarme.'; }
       else if (t >= 6.6 && t < 8.8) { passo = 2; testo = 'Una persona si avvicina al perimetro…'; }
-      else if (inAllarme) { passo = t < 10.5 ? 2 : 3; testo = `Allarme: il segnale supera la soglia. Intrusione localizzata a ${metriPersona} m lungo il perimetro.`; }
+      else if (inAllarme) { passo = t < 10.5 ? 2 : 3; testo = `Allarme: il segnale supera la soglia di quel tratto. Intrusione localizzata a ${metriPersona} m lungo il perimetro.`; }
       if (stato.textContent !== testo) stato.textContent = testo;
       stato.classList.toggle('rosso', inAllarme);
       pulsanti.forEach((p, i) => p.setAttribute('aria-pressed', String(i === passo)));
