@@ -56,21 +56,12 @@ const impieghi = [
         <h2>In breve</h2>
         <Segnaposto testo="Cos’è MicroTrack in 4-5 righe, per chi non è tecnico: cosa protegge, perché è invisibile, cosa succede quando qualcuno attraversa il perimetro." righe={4} />
         <nav class="indice" aria-label="In questa pagina">
-          <a href="#come-funziona">Come funziona</a>
           <a href="#campo">Il campo di rilevazione</a>
+          <a href="#come-funziona">Come funziona</a>
           <a href="#cantiere">Dal cantiere</a>
           <a href="#dove-si-usa">Dove si usa</a>
           <a href="#approfondimento">Approfondimento tecnico</a>
         </nav>
-      </section>
-
-      <section id="come-funziona" class="come-funziona">
-        <p class="livello">Come funziona</p>
-        <h2>Il perimetro che si accorge di chi passa</h2>
-        <div class="anim-riga">
-          <Animazione />
-          <Segnaposto testo="Spiegazione del principio: i due cavi, il campo che generano, le sottocelle, la soglia di allarme tarata tratto per tratto in base al terreno, perché un animale piccolo non fa scattare l’allarme e una persona sì, la localizzazione del punto." righe={10} />
-        </div>
       </section>
 
       <section id="campo" class="campo">
@@ -90,6 +81,15 @@ const impieghi = [
             </table>
             <p class="nota">Y = interasse tra i due cavi.</p>
           </div>
+        </div>
+      </section>
+
+      <section id="come-funziona" class="come-funziona">
+        <p class="livello">Come funziona</p>
+        <h2>Il perimetro che si accorge di chi passa</h2>
+        <div class="anim-riga">
+          <Animazione />
+          <Segnaposto testo="Spiegazione del principio: i due cavi, il campo che generano, le sottocelle, la soglia di allarme tarata tratto per tratto in base al terreno, perché un animale piccolo non fa scattare l’allarme e una persona sì, la localizzazione del punto." righe={10} />
         </div>
       </section>
 
