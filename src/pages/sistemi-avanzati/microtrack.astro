@@ -64,12 +64,10 @@ const impieghi = [
         </nav>
       </section>
 
-      <section id="come-funziona" class="due-colonne">
-        <div>
-          <p class="livello">Come funziona</p>
-          <h2>Il perimetro che si accorge di chi passa</h2>
-          <Segnaposto testo="Spiegazione del principio: i due cavi, il campo che generano, il processore che riconosce l’attraversamento e indica il punto preciso (con la precisione di localizzazione)." righe={7} />
-        </div>
+      <section id="come-funziona" class="come-funziona">
+        <p class="livello">Come funziona</p>
+        <h2>Il perimetro che si accorge di chi passa</h2>
+        <Segnaposto testo="Spiegazione del principio: i due cavi, il campo che generano, le sottocelle, la soglia tarata tratto per tratto, perché un animale piccolo non fa scattare l’allarme e una persona sì, la localizzazione del punto." righe={4} />
         <Animazione />
       </section>
 
@@ -197,6 +195,8 @@ const impieghi = [
   .due-colonne{display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(24px,4vw,56px);align-items:center}
   .due-colonne.stretta{grid-template-columns:1fr 1fr;align-items:start;margin-top:28px}
   .campo{display:grid}
+  .come-funziona{display:grid;gap:18px}
+  .come-funziona h2{margin-bottom:0}
 
   .tabella-box{background:rgba(10,26,46,.55);border:1px solid rgba(143,176,204,.35);border-radius:14px;padding:20px}
   table{width:100%;border-collapse:collapse;font-family:var(--font-testo);font-size:15px}

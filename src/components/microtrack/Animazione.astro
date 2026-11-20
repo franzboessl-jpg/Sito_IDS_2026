@@ -1,57 +1,249 @@
 ---
-// Animazione a passi: tre fotogrammi Southwest Microwave (materiale autorizzato, senza filigrana I.D.S.).
-// Avanza da sola ogni 3,5 s; si ferma se l'utente sceglie un passo o se ha chiesto meno animazioni.
-import { url } from '../../site';
-
+// Animazione originale I.D.S. del principio MicroTrack (pianta dall'alto + segnale per sottocella).
+// Sequenza di 16 s: campo attivo → un animale attraversa (sotto soglia) → una persona attraversa
+// (sopra soglia) → allarme localizzato in metri. Pulsanti per i passi e pausa (WCAG 2.2.2);
+// con "riduci animazioni" parte ferma sul passo dell'allarme.
+// Valori didattici coerenti con la scheda tecnica: sottocelle di 2 m (60 sottocelle = 120 m di perimetro).
 const passi = [
-  { img: '/assets/microtrack/animazione-104.webp', titolo: 'Campo attivo', alt: 'Il campo invisibile del MicroTrack lungo il perimetro, nessuno all’interno' },
-  { img: '/assets/microtrack/animazione-105.webp', titolo: 'Una persona si avvicina', alt: 'Una persona cammina verso il perimetro protetto' },
-  { img: '/assets/microtrack/animazione-106.webp', titolo: 'Attraversamento rilevato', alt: 'Il tratto di campo attraversato dalla persona si accende in rosso: il punto è localizzato' },
+  { t: 0, fermo: 0, titolo: 'Campo attivo' },
+  { t: 2, fermo: 4, titolo: 'Passa un animale' },
+  { t: 6.6, fermo: 8.3, titolo: 'Passa una persona' },
+  { t: 10.5, fermo: 11, titolo: 'Allarme localizzato' },
 ];
 ---
-<figure class="animazione" data-animazione>
-  <div class="scena">
-    {passi.map((p, i) => (
-      <img src={url(p.img)} alt={p.alt} width="1400" height="933" loading={i === 0 ? 'eager' : 'lazy'} class:list={[{ attivo: i === 0 }]} data-passo={i} />
-    ))}
-  </div>
+<figure class="animazione" data-mt-anim>
+  <div class="scorri"><svg viewBox="0 0 900 640" role="img" aria-labelledby="mt-anim-titolo mt-anim-desc">
+    <title id="mt-anim-titolo">Come MicroTrack distingue un animale da una persona</title>
+    <desc id="mt-anim-desc">Pianta dall'alto di un'abitazione con il campo di rilevazione lungo tutto il perimetro, diviso in sottocelle da 2 metri. Sotto, il grafico del segnale di ogni sottocella con la soglia di allarme. Un gatto attraversa il perimetro: il segnale resta sotto la soglia e non scatta nulla. Poi una persona attraversa: il segnale supera la soglia, scatta l'allarme e il sistema indica il punto esatto in metri.</desc>
+
+    <!-- Legenda -->
+    <g class="legenda" transform="translate(40 30)">
+      <rect x="0" y="-11" width="30" height="14" rx="3" fill="#4A90D9" fill-opacity=".45" />
+      <text x="38" y="0">campo di rilevazione</text>
+      <line x1="210" y1="-4" x2="240" y2="-4" stroke="#E24C3B" stroke-width="3" />
+      <text x="248" y="0">cavi interrati</text>
+      <rect x="380" y="-11" width="3" height="14" fill="#fff" fill-opacity=".7" />
+      <text x="391" y="0">divisione tra sottocelle (2 m)</text>
+    </g>
+
+    <!-- Pianta -->
+    <rect x="20" y="50" width="860" height="400" rx="16" fill="#0E2240" stroke="#3A6A93" />
+    <rect x="110" y="70" width="680" height="360" rx="56" fill="#17392B" />
+    <!-- alberi -->
+    <g fill="#1F4D38" stroke="#2C6A4C" stroke-width="2">
+      <circle cx="215" cy="190" r="26" /><circle cx="250" cy="335" r="20" /><circle cx="690" cy="345" r="24" />
+    </g>
+    <!-- abitazione -->
+    <g>
+      <rect x="320" y="185" width="270" height="150" rx="6" fill="#2A3F55" stroke="#8FB0CC" stroke-width="2" />
+      <path d="M320 185 L455 260 L590 185 M320 335 L455 260 L590 335" stroke="#8FB0CC" stroke-width="1.5" fill="none" opacity=".6" />
+      <text x="455" y="365" text-anchor="middle" class="et">abitazione</text>
+    </g>
+    <!-- processore -->
+    <line x1="590" y1="300" x2="750" y2="300" stroke="#8FB0CC" stroke-width="2" stroke-dasharray="6 5" />
+    <rect x="606" y="282" width="56" height="34" rx="4" fill="#0A1A2E" stroke="#8FB0CC" stroke-width="2" />
+    <text x="634" y="304" text-anchor="middle" class="et piccolo">MTP</text>
+    <text x="634" y="335" text-anchor="middle" class="et piccolo">processore</text>
+
+    <!-- campo, sottocelle, cavi, evidenze -->
+    <defs><path id="mt-percorso" data-percorso d="M190 100 H710 A40 40 0 0 1 750 140 V360 A40 40 0 0 1 710 400 H190 A40 40 0 0 1 150 360 V140 A40 40 0 0 1 190 100 Z" /></defs>
+    <use href="#mt-percorso" fill="none" stroke="#4A90D9" stroke-opacity=".38" stroke-width="34" />
+    <use href="#mt-percorso" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="34" data-celle />
+    <use href="#mt-percorso" fill="none" stroke="#E8A33D" stroke-width="36" stroke-opacity="0" data-evid-animale />
+    <use href="#mt-percorso" fill="none" stroke="#E24C3B" stroke-width="40" stroke-opacity="0" data-evid-persona />
+    <use href="#mt-percorso" fill="none" stroke="#E24C3B" stroke-width="3" />
+
+    <!-- gatto (vista dall'alto) -->
+    <g data-gatto opacity="0">
+      <ellipse cx="0" cy="0" rx="11" ry="5" fill="#D9D2C5" />
+      <circle cx="12" cy="0" r="4.5" fill="#D9D2C5" />
+      <path d="M-11 0 q-8 -2 -12 -9" stroke="#D9D2C5" stroke-width="2.5" fill="none" stroke-linecap="round" />
+    </g>
+    <!-- persona (vista dall'alto) -->
+    <g data-persona opacity="0">
+      <ellipse cx="0" cy="0" rx="15" ry="8" fill="#F4F7FA" />
+      <circle cx="0" cy="1" r="7" fill="#C9D6E2" stroke="#F4F7FA" stroke-width="2" />
+    </g>
+
+    <!-- segnaposto dell'allarme -->
+    <g data-allarme opacity="0">
+      <circle r="22" fill="none" stroke="#E24C3B" stroke-width="3" data-onda />
+      <g data-etichetta>
+        <rect x="34" y="24" width="192" height="30" rx="6" fill="#E24C3B" />
+        <text x="130" y="44" text-anchor="middle" class="et forte" data-testo-allarme>ALLARME · 0 m</text>
+      </g>
+    </g>
+
+    <!-- Grafico del segnale per sottocella -->
+    <g class="grafico">
+      <text x="30" y="535" transform="rotate(-90 30 535)" text-anchor="middle" class="et piccolo">segnale (dB)</text>
+      <line x1="60" y1="590" x2="840" y2="590" stroke="#8FB0CC" stroke-width="1.5" />
+      <line x1="60" y1="470" x2="60" y2="590" stroke="#8FB0CC" stroke-width="1.5" />
+      <g data-barre></g>
+      <line x1="60" y1="525" x2="840" y2="525" stroke="#E24C3B" stroke-width="2" stroke-dasharray="8 6" />
+      <text x="836" y="517" text-anchor="end" class="et piccolo rosso">soglia di allarme</text>
+      <g class="et piccolo" text-anchor="middle">
+        <text x="60" y="608">0</text><text x="255" y="608">30</text><text x="450" y="608">60</text><text x="645" y="608">90</text><text x="840" y="608">120</text>
+      </g>
+      <text x="450" y="630" text-anchor="middle" class="et piccolo">posizione lungo il perimetro (m) · una barra per sottocella</text>
+    </g>
+  </svg></div>
+
+  <p class="stato" data-stato>Campo attivo: il perimetro è sorvegliato, nessun segnale supera la soglia.</p>
+
   <div class="comandi" role="group" aria-label="Passi dell'animazione">
     {passi.map((p, i) => (
-      <button type="button" aria-pressed={i === 0 ? 'true' : 'false'} data-vai={i}>
-        <span class="n">{i + 1}</span> {p.titolo}
-      </button>
+      <button type="button" data-vai={p.t} data-fermo={p.fermo} aria-pressed={i === 0 ? 'true' : 'false'}><span class="n">{i + 1}</span> {p.titolo}</button>
     ))}
+    <button type="button" class="pausa" data-pausa aria-label="Metti in pausa l'animazione">❚❚</button>
   </div>
-  <figcaption>Immagini: Southwest Microwave, Inc.</figcaption>
 </figure>
 
 <script>
-  document.querySelectorAll<HTMLElement>('[data-animazione]').forEach((box) => {
-    const immagini = [...box.querySelectorAll<HTMLImageElement>('[data-passo]')];
-    const pulsanti = [...box.querySelectorAll<HTMLButtonElement>('[data-vai]')];
-    let corrente = 0;
-    let timer: number | undefined;
-    const mostra = (n: number) => {
-      corrente = n;
-      immagini.forEach((im, i) => im.classList.toggle('attivo', i === n));
-      pulsanti.forEach((b, i) => b.setAttribute('aria-pressed', String(i === n)));
+  const DURATA = 16, N = 60, METRI = 120;
+  const X0 = 60, LARGH = 780, BASE = 590, SOGLIA = 525;
+
+  document.querySelectorAll<HTMLElement>('[data-mt-anim]').forEach((box) => {
+    const q = <T extends Element>(s: string) => box.querySelector(s) as T;
+    const percorso = q<SVGPathElement>('[data-percorso]');
+    const L = percorso.getTotalLength();
+    const cella = L / N;
+    q<SVGUseElement>('[data-celle]').setAttribute('stroke-dasharray', `2 ${cella - 2}`);
+
+    // punto del percorso più vicino a (x, y) → ascissa curvilinea
+    const ascissa = (x: number, y: number) => {
+      let best = 0, dmin = Infinity;
+      for (let s = 0; s < L; s += 2) {
+        const p = percorso.getPointAtLength(s);
+        const d = (p.x - x) ** 2 + (p.y - y) ** 2;
+        if (d < dmin) { dmin = d; best = s; }
+      }
+      return best;
     };
-    pulsanti.forEach((b, i) => b.addEventListener('click', () => { window.clearInterval(timer); timer = undefined; mostra(i); }));
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      timer = window.setInterval(() => mostra((corrente + 1) % immagini.length), 3500);
-    }
+    const sGatto = ascissa(150, 300), sPersona = ascissa(520, 100);
+    const iGatto = Math.floor(sGatto / cella), iPersona = Math.floor(sPersona / cella);
+    const metriPersona = Math.round((iPersona + 0.5) * METRI / N);
+    const pAllarme = percorso.getPointAtLength((iPersona + 0.5) * cella);
+
+    const evid = (sel: string, i: number) => {
+      const el = q<SVGUseElement>(sel);
+      el.setAttribute('stroke-dasharray', `${cella} ${L}`);
+      el.setAttribute('stroke-dashoffset', String(-i * cella));
+      return el;
+    };
+    const evAnimale = evid('[data-evid-animale]', iGatto);
+    const evPersona = evid('[data-evid-persona]', iPersona);
+
+    // barre del grafico
+    const gBarre = q<SVGGElement>('[data-barre]');
+    const NS = 'http://www.w3.org/2000/svg';
+    const barre = Array.from({ length: N }, (_, i) => {
+      const r = document.createElementNS(NS, 'rect');
+      r.setAttribute('x', String(X0 + i * (LARGH / N) + 2));
+      r.setAttribute('width', String(LARGH / N - 4));
+      r.setAttribute('rx', '1.5');
+      gBarre.appendChild(r);
+      return r;
+    });
+    const rumore = barre.map((_, i) => 0.5 + 0.5 * Math.sin(i * 1.7));
+
+    const gatto = q<SVGGElement>('[data-gatto]'), persona = q<SVGGElement>('[data-persona]');
+    const allarme = q<SVGGElement>('[data-allarme]'), onda = q<SVGCircleElement>('[data-onda]');
+    q<SVGTextElement>('[data-testo-allarme]').textContent = `ALLARME · ${metriPersona} m`;
+    allarme.setAttribute('transform', `translate(${pAllarme.x} ${pAllarme.y})`);
+    const stato = q<HTMLElement>('[data-stato]');
+    const pulsanti = [...box.querySelectorAll<HTMLButtonElement>('[data-vai]')];
+    const pausa = q<HTMLButtonElement>('[data-pausa]');
+
+    const fra = (t: number, a: number, b: number) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+    const vicinanza = (d: number) => Math.max(0, 1 - Math.abs(d) / 34);
+
+    const disegna = (t: number) => {
+      // gatto: da fuori a dentro sul lato sinistro (t 2 → 6)
+      const visGatto = t >= 2 && t < 6.3;
+      const gx = 60 + fra(t, 2, 6) * 190;
+      gatto.setAttribute('transform', `translate(${gx} 300)`);
+      gatto.setAttribute('opacity', visGatto ? '1' : '0');
+      const segGatto = visGatto ? vicinanza(gx - 150) : 0;
+
+      // persona: da fuori a dentro sul lato nord (t 6.6 → 10.4), poi resta ferma
+      const visPersona = t >= 6.6 && t < 15.4;
+      const py = -20 + fra(t, 6.6, 10.4) * 185;
+      persona.setAttribute('transform', `translate(520 ${py})`);
+      persona.setAttribute('opacity', visPersona && py > 52 ? '1' : '0');
+      const segPersona = visPersona && py > 52 ? vicinanza(py - 100) : 0;
+      const inAllarme = t >= 8.8 && t < 15.4;
+
+      // barre
+      barre.forEach((b, i) => {
+        let v = 0.12 + 0.08 * rumore[i] * (0.6 + 0.4 * Math.sin(t * 3 + i));
+        let colore = '#4A90D9';
+        if (i === iGatto) { v += 0.42 * segGatto; if (segGatto > 0.05) colore = '#E8A33D'; }
+        if (Math.abs(i - iPersona) <= 1) {
+          const k = i === iPersona ? 1.35 : 0.45;
+          v += k * segPersona;
+          if (inAllarme && i === iPersona) { v = Math.max(v, 0.72 + 0.05 * Math.sin(t * 6)); colore = '#E24C3B'; }
+        }
+        const h = Math.min(1, v) * 120;
+        b.setAttribute('y', String(BASE - h));
+        b.setAttribute('height', String(h));
+        b.setAttribute('fill', colore);
+      });
+
+      evAnimale.setAttribute('stroke-opacity', String(0.75 * segGatto));
+      evPersona.setAttribute('stroke-opacity', inAllarme ? String(0.65 + 0.3 * Math.sin(t * 6)) : '0');
+      allarme.setAttribute('opacity', inAllarme ? '1' : '0');
+      const fase = (t * 0.9) % 1;
+      onda.setAttribute('r', String(18 + fase * 26));
+      onda.setAttribute('stroke-opacity', String(1 - fase));
+
+      let testo = 'Campo attivo: il perimetro è sorvegliato, nessun segnale supera la soglia.';
+      let passo = 0;
+      if (t >= 2 && t < 6.6) { passo = 1; testo = 'Un piccolo animale attraversa: il segnale sale ma resta sotto la soglia, nessun allarme.'; }
+      else if (t >= 6.6 && t < 8.8) { passo = 2; testo = 'Una persona si avvicina al perimetro…'; }
+      else if (inAllarme) { passo = t < 10.5 ? 2 : 3; testo = `Allarme: il segnale supera la soglia. Intrusione localizzata a ${metriPersona} m lungo il perimetro.`; }
+      if (stato.textContent !== testo) stato.textContent = testo;
+      stato.classList.toggle('rosso', inAllarme);
+      pulsanti.forEach((p, i) => p.setAttribute('aria-pressed', String(i === passo)));
+    };
+
+    let t = 0, inCorso = !window.matchMedia('(prefers-reduced-motion: reduce)').matches, ultimo = 0;
+    if (!inCorso) t = 11;
+    const aggiornaPausa = () => {
+      pausa.textContent = inCorso ? '❚❚' : '▶';
+      pausa.setAttribute('aria-label', inCorso ? 'Metti in pausa l’animazione' : 'Avvia l’animazione');
+    };
+    const ciclo = (ora: number) => {
+      if (inCorso) { t = (t + Math.min(0.1, (ora - ultimo) / 1000)) % DURATA; disegna(t); }
+      ultimo = ora;
+      requestAnimationFrame(ciclo);
+    };
+    pulsanti.forEach((p) => p.addEventListener('click', () => {
+      t = Number(inCorso ? p.dataset.vai : p.dataset.fermo);
+      disegna(t);
+    }));
+    pausa.addEventListener('click', () => { inCorso = !inCorso; aggiornaPausa(); });
+    aggiornaPausa();
+    disegna(t);
+    requestAnimationFrame((ora) => { ultimo = ora; requestAnimationFrame(ciclo); });
   });
 </script>
 
 <style>
   .animazione{margin:0;display:grid;gap:12px}
-  .scena{position:relative;aspect-ratio:3/2;border-radius:16px;overflow:hidden;background:#fff;border:1px solid rgba(143,176,204,.45)}
-  .scena img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s ease}
-  .scena img.attivo{opacity:1}
+  .scorri{overflow-x:auto;border-radius:16px}
+  @media (max-width:640px){ svg{min-width:640px} }
+  svg{display:block;width:100%;height:auto;border-radius:16px;background:#0A1A2E;border:1px solid rgba(143,176,204,.45)}
+  .legenda text,.et{font-family:var(--font-testo);font-size:17px;fill:#E3ECF4}
+  .piccolo{font-size:15px}
+  .forte{font-weight:700;fill:#fff}
+  .rosso{fill:#FF7B6B}
+  .stato{margin:0;min-height:3em;font-family:var(--font-testo);font-size:16px;line-height:1.5;color:var(--ghiaccio);border-left:4px solid var(--luminoso);padding:4px 0 4px 12px}
+  .stato.rosso{border-color:#E24C3B;color:#fff}
   .comandi{display:flex;flex-wrap:wrap;gap:8px}
   button{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid rgba(143,176,204,.55);background:transparent;color:var(--ghiaccio);font:600 15px var(--font-testo);cursor:pointer;transition:background .3s ease,border-color .3s ease}
   button:hover{border-color:var(--luminoso)}
   button[aria-pressed="true"]{background:var(--luminoso);border-color:var(--luminoso);color:#fff}
+  .pausa{min-width:44px;justify-content:center}
   .n{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.18);font-size:13px}
-  figcaption{font-family:var(--font-testo);font-size:13px;color:var(--chiaro)}
 </style>
