@@ -84,7 +84,7 @@ const proiezione = JSON.stringify({ A, B, C, D, E, F });
       <rect x="60" y="60" width="780" height="380" fill="#1C4A31" />
       <rect x="110" y="70" width="680" height="360" rx="56" fill="#24593C" />
       <!-- ombre degli alberi e dello stabile -->
-      {alberi.map(([x, y]) => <ellipse cx={x + 10} cy={y + 6} rx="24" ry="20" fill="#000" fill-opacity=".22" />)}
+      {alberi.map(([x, y]) => <ellipse cx={x + 16} cy={y + 4} rx="26" ry="20" fill="#000" fill-opacity=".25" />)}
       <rect x={S.x1 + 8} y={S.y1 + 8} width={S.x2 - S.x1} height={S.y2 - S.y1} fill="#000" fill-opacity=".22" />
       <!-- collegamento interrato stabile → processore → cavi -->
       <line x1="540" y1="290" x2="750" y2="290" stroke="#8FB0CC" stroke-width="2" stroke-dasharray="6 5" />
@@ -128,13 +128,29 @@ const proiezione = JSON.stringify({ A, B, C, D, E, F });
       <text x={P(SV.x2, SV.y2, -SV.p / 2)[0] + 44} y={P(SV.x2, SV.y2, -SV.p / 2)[1] + 78} class="et piccolo">sotto il prato: nessuna recinzione</text>
     </g>
 
-    <!-- alberi (tronco + chioma) -->
-    {alberi.map(([x, y]) => (
-      <g>
-        <line x1={P(x, y)[0]} y1={P(x, y)[1]} x2={P(x, y, 20)[0]} y2={P(x, y, 20)[1]} stroke="#5A4230" stroke-width="4" />
-        <circle cx={P(x, y, 30)[0]} cy={P(x, y, 30)[1]} r="17" fill="#2E6B47" stroke="#3E8E5A" stroke-width="2" />
-      </g>
-    ))}
+    <!-- alberi: chioma a ciuffi con luce da sinistra e ombra a destra, tronco con rami -->
+    {alberi.map(([x, y], n) => {
+      const [bx, by] = P(x, y);
+      const k = n === 1 ? 1.05 : 1.25;
+      return (
+        <g transform={`translate(${bx} ${by}) scale(${k})`}>
+          <path d="M-2.5 0 L-1.8 -24 L-7 -32 M-1.8 -24 L1.5 -30 L6 -36 M1.5 -30 L1.8 -38" stroke="#5A4230" stroke-width="3" fill="none" stroke-linecap="round" />
+          <path d="M-3 0 L-2 -22 L2 -22 L3 0 Z" fill="#5A4230" />
+          <g>
+            <circle cx="9" cy="-36" r="12" fill="#1E5233" />
+            <circle cx="-10" cy="-34" r="11" fill="#245E3B" />
+            <circle cx="0" cy="-30" r="11" fill="#1E5233" />
+            <circle cx="-5" cy="-46" r="12" fill="#2E7448" />
+            <circle cx="7" cy="-48" r="11" fill="#2A6B42" />
+            <circle cx="0" cy="-56" r="9" fill="#378653" />
+            <circle cx="-9" cy="-50" r="6" fill="#4A9E64" />
+            <circle cx="-3" cy="-58" r="4.5" fill="#5DB074" />
+            <circle cx="-13" cy="-38" r="4" fill="#4A9E64" />
+            <circle cx="13" cy="-30" r="5" fill="#174428" />
+          </g>
+        </g>
+      );
+    })}
 
     <!-- stabile (volume) -->
     <polygon points={pts([[S.x1, S.y1, 0], [S.x1, S.y2, 0], [S.x1, S.y2, S.h], [S.x1, S.y1, S.h]])} fill="#2A3F55" stroke="#8FB0CC" stroke-width="1.5" />
