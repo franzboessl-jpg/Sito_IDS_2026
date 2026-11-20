@@ -1,12 +1,13 @@
 ---
 // Sezione trasversale del campo di rilevazione MicroTrack, disegnata in scala (1 m = 150 px).
-// Valori tratti dagli schemi Southwest Microwave: DA CONFERMARE da Franz prima della pubblicazione.
-// Disegno in scala (barra 0–1 m in basso a sinistra). Esempio disegnato: interasse Y = 1,2 m, campo primario largo 2 m, campo secondario alto 1,4 m.
+// Valori dalla scheda tecnica ufficiale MicroTrack II in italiano (Southwest Microwave, 2014):
+// interasse cavi fino a 2 m, larghezza del campo fino a 3 m, altezza fino a 1 m.
+// Disegno in scala (barra 0–1 m in basso a sinistra). Esempio disegnato: interasse 1,2 m, campo largo 3 m e alto 1 m.
 ---
 <figure class="schema">
   <svg viewBox="0 0 1000 640" role="img" aria-labelledby="schema-titolo schema-desc">
     <title id="schema-titolo">Sezione del campo di rilevazione MicroTrack</title>
-    <desc id="schema-desc">Due cavi sensori interrati a distanza Y tra 0,75 e 2 metri generano un campo invisibile a cupola. Il campo primario è largo da 1,4 a 2,6 metri; il campo secondario arriva fino a circa 1,4 metri di altezza. Una persona alta 1,75 metri è disegnata accanto per confronto.</desc>
+    <desc id="schema-desc">Due cavi sensori interrati a distanza fino a 2 metri generano un campo invisibile a cupola. Il campo è largo fino a 3 metri e alto fino a 1 metro sopra il terreno. Una persona alta 1,75 metri è disegnata accanto per confronto.</desc>
     <defs>
       <clipPath id="sopra"><rect x="0" y="0" width="1000" height="360" /></clipPath>
       <clipPath id="sotto"><rect x="0" y="360" width="1000" height="160" /></clipPath>
@@ -23,16 +24,16 @@
 
     <!-- Campo secondario e primario: pieno sopra il terreno, attenuato sotto -->
     <g clip-path="url(#sopra)">
-      <ellipse cx="430" cy="360" rx="230" ry="210" fill="#8FB0CC" fill-opacity=".45" stroke="#1C4467" stroke-width="2.5" stroke-dasharray="10 7" />
-      <ellipse cx="430" cy="360" rx="150" ry="135" fill="#4A90D9" fill-opacity=".55" stroke="#002950" stroke-width="3" />
+      <ellipse cx="430" cy="360" rx="225" ry="150" fill="#8FB0CC" fill-opacity=".45" stroke="#1C4467" stroke-width="2.5" stroke-dasharray="10 7" />
+      <ellipse cx="430" cy="360" rx="150" ry="100" fill="#4A90D9" fill-opacity=".55" stroke="#002950" stroke-width="3" />
     </g>
     <g clip-path="url(#sotto)" opacity=".45">
-      <ellipse cx="430" cy="360" rx="230" ry="92" fill="#8FB0CC" stroke="#1C4467" stroke-width="2" stroke-dasharray="10 7" />
+      <ellipse cx="430" cy="360" rx="225" ry="92" fill="#8FB0CC" stroke="#1C4467" stroke-width="2" stroke-dasharray="10 7" />
       <ellipse cx="430" cy="360" rx="150" ry="62" fill="#4A90D9" stroke="#002950" stroke-width="2" />
     </g>
-    <text x="430" y="196" text-anchor="middle" class="t">campo secondario</text>
-    <text x="430" y="292" text-anchor="middle" class="t forte bianco">campo primario</text>
-    <text x="430" y="316" text-anchor="middle" class="t piccolo bianco">(zona di rilevazione)</text>
+    <text x="430" y="238" text-anchor="middle" class="t">campo secondario</text>
+    <text x="430" y="306" text-anchor="middle" class="t forte bianco">campo primario</text>
+    <text x="430" y="330" text-anchor="middle" class="t piccolo bianco">(massima sensibilità)</text>
 
     <!-- Cavi -->
     <circle cx="340" cy="395" r="9" fill="#C0392B" stroke="#0A1A2E" stroke-width="2" />
@@ -45,22 +46,21 @@
     <line x1="340" y1="405" x2="340" y2="452" class="rif" />
     <line x1="520" y1="405" x2="520" y2="452" class="rif" />
     <line x1="342" y1="445" x2="518" y2="445" class="quota" marker-start="url(#freccia)" marker-end="url(#freccia)" />
-    <text x="430" y="472" text-anchor="middle" class="t forte">Y = 0,75 – 2 m</text>
+    <text x="430" y="472" text-anchor="middle" class="t forte">fino a 2 m</text>
     <text x="430" y="494" text-anchor="middle" class="t piccolo">interasse tra i cavi</text>
 
     <!-- Quota larghezza campo primario -->
-    <line x1="280" y1="362" x2="280" y2="560" class="rif" />
-    <line x1="580" y1="362" x2="580" y2="560" class="rif" />
-    <line x1="282" y1="550" x2="578" y2="550" class="quota" marker-start="url(#freccia)" marker-end="url(#freccia)" />
-    <text x="430" y="580" text-anchor="middle" class="t forte">1,4 – 2,6 m</text>
-    <text x="430" y="602" text-anchor="middle" class="t piccolo">larghezza del campo primario</text>
+    <line x1="205" y1="362" x2="205" y2="560" class="rif" />
+    <line x1="655" y1="362" x2="655" y2="560" class="rif" />
+    <line x1="207" y1="550" x2="653" y2="550" class="quota" marker-start="url(#freccia)" marker-end="url(#freccia)" />
+    <text x="430" y="580" text-anchor="middle" class="t forte">fino a 3 m</text>
+    <text x="430" y="602" text-anchor="middle" class="t piccolo">larghezza del campo di rilevazione</text>
 
     <!-- Quota altezza campo secondario -->
-    <line x1="430" y1="150" x2="700" y2="150" class="rif" />
-    <line x1="690" y1="152" x2="690" y2="358" class="quota" marker-start="url(#freccia)" marker-end="url(#freccia)" />
-    <text x="704" y="248" class="t forte">fino a</text>
-    <text x="704" y="272" class="t forte">circa 1,4 m</text>
-    <text x="704" y="294" class="t piccolo">altezza del campo</text>
+    <line x1="430" y1="210" x2="700" y2="210" class="rif" />
+    <line x1="690" y1="212" x2="690" y2="358" class="quota" marker-start="url(#freccia)" marker-end="url(#freccia)" />
+    <text x="704" y="276" class="t forte">fino a 1 m</text>
+    <text x="704" y="298" class="t piccolo">altezza del campo</text>
 
     <!-- Persona per confronto (1,75 m = 262 px) -->
     <g transform="translate(880 98)" fill="#1E2A36">
