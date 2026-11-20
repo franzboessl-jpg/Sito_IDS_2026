@@ -32,7 +32,7 @@ jobs:
         run: |
           npm run build:prova
           # pagina "in preparazione" per gli indirizzi non ancora esistenti
-          printf 'ErrorDocument 404 /nuovo/404.html\n' > dist/.htaccess
+          printf 'ErrorDocument 404 /nuovo/404.html\nErrorDocument 403 /nuovo/404.html\n' > dist/.htaccess
 
       - name: Carica su United Host via FTPS (lftp)
         if: env.FTP_SERVER != ''

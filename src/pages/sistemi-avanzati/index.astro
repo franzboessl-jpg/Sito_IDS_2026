@@ -1,0 +1,94 @@
+---
+// Sistemi avanzati – pagina indice delle tecnologie (tono tecnico, sfondo scuro).
+// Solo MicroTrack ha già la sua pagina; le altre schede sono segnaposto.
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Segnaposto from '../../components/Segnaposto.astro';
+import FotoSegnaposto from '../../components/FotoSegnaposto.astro';
+import { AZIENDA, tel, url } from '../../site';
+
+const tecnologie = [
+  { titolo: 'MicroTrack', sottotitolo: 'Cavo sensore interrato', href: '/sistemi-avanzati/microtrack/', foto: '/assets/microtrack/giardino-ripristinato.webp', alt: 'Giardino con prato ricresciuto sopra il cavo sensore MicroTrack, invisibile' },
+  { titolo: 'Tecnologia 2', sottotitolo: 'Da definire', foto: null },
+  { titolo: 'Tecnologia 3', sottotitolo: 'Da definire', foto: null },
+  { titolo: 'Tecnologia 4', sottotitolo: 'Da definire', foto: null },
+  { titolo: 'Tecnologia 5', sottotitolo: 'Da definire', foto: null },
+  { titolo: 'Tecnologia 6', sottotitolo: 'Da definire', foto: null },
+];
+---
+<Base
+  title="Sistemi avanzati di protezione perimetrale e videoanalisi | I.D.S. Sicurezza"
+  description="Sistemi avanzati per infrastrutture, industria e impianti fotovoltaici: sensori perimetrali interrati, videoanalisi e integrazione. Progetto, installazione e taratura: I.D.S. Sicurezza, dal 1975."
+  image="/assets/sistemi-avanzati.webp"
+>
+  <Header />
+  <main>
+    <section class="hero">
+      <img class="hero-foto" src={url('/assets/sistemi-avanzati.webp')} alt="" width="1800" height="600" />
+      <div class="hero-testo">
+        <nav class="briciole" aria-label="Percorso"><a href={url('/')}>Home</a> › <span>Sistemi avanzati</span></nav>
+        <h1>Sistemi avanzati</h1>
+        <p class="sottotitolo">Tecnologie per infrastrutture, industria e grandi perimetri.</p>
+      </div>
+    </section>
+
+    <div class="contenuto">
+      <Segnaposto testo="Introduzione (3-4 righe): a chi si rivolge questa sezione e cosa distingue I.D.S. nei sistemi ad alta integrazione." righe={3} />
+      <ul class="schede">
+        {tecnologie.map((t) => (
+          <li>
+            {t.href ? (
+              <a class="scheda" href={url(t.href)}>
+                <img src={url(t.foto!)} alt={t.alt} width="1800" height="1013" loading="lazy" />
+                <span class="tema">{t.sottotitolo}</span>
+                <h2>{t.titolo}</h2>
+                <span class="vai">Scopri come funziona →</span>
+              </a>
+            ) : (
+              <div class="scheda vuota">
+                <FotoSegnaposto testo={`Foto: ${t.titolo.toLowerCase()}`} rapporto="16/9" />
+                <span class="tema">{t.sottotitolo}</span>
+                <h2>{t.titolo}</h2>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <section class="contatti">
+      <h2>Contatti</h2>
+      <div class="azioni">
+        <a class="pulsante" href={tel(AZIENDA.sede.telefoni[0])}>Chiama {AZIENDA.sede.telefoni[0]}</a>
+        <a class="pulsante secondario" href={`mailto:${AZIENDA.email}`}>Scrivi a {AZIENDA.email}</a>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .hero{position:relative;width:min(1560px,95%);margin:24px auto 0;border-radius:18px;overflow:hidden;border:1px solid rgba(143,176,204,.45);min-height:clamp(260px,30vw,420px);display:flex;align-items:flex-end}
+  .hero-foto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,26,46,.9) 0%,rgba(10,26,46,.55) 45%,rgba(10,26,46,.05) 78%),linear-gradient(0deg,rgba(10,26,46,.6),transparent 50%)}
+  .hero-testo{position:relative;z-index:1;padding:clamp(22px,4vw,48px);max-width:720px}
+  .briciole{font-family:var(--font-testo);font-size:14px;color:var(--chiaro);margin-bottom:12px}
+  .briciole a{color:var(--chiaro);text-decoration:none}
+  h1{margin:0 0 10px;font-size:clamp(34px,4.4vw,56px);line-height:1.1;color:#fff}
+  .sottotitolo{margin:0;font-family:var(--font-testo);font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ghiaccio)}
+  .contenuto{width:min(1200px,92%);margin:0 auto;padding:48px 0;display:grid;gap:32px}
+  .schede{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+  .scheda{display:grid;gap:8px;height:100%;padding:14px 14px 20px;border-radius:16px;border:1px solid rgba(143,176,204,.35);background:rgba(10,26,46,.55);color:inherit;text-decoration:none;transition:border-color .3s ease,background .3s ease}
+  a.scheda:hover,a.scheda:focus-visible{border-color:var(--luminoso);background:rgba(74,144,217,.12)}
+  .scheda img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px}
+  .tema{margin-top:6px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--luminoso)}
+  h2{margin:0;font-size:24px;color:#fff}
+  .vai{font-family:var(--font-testo);font-size:15px;color:var(--chiaro)}
+  .vuota{opacity:.75}
+  .contatti{width:min(1200px,92%);margin:0 auto;padding:40px 0 64px;display:grid;gap:18px;justify-items:start;border-top:1px solid rgba(143,176,204,.22)}
+  .contatti h2{font-size:clamp(26px,2.6vw,36px)}
+  .azioni{display:flex;flex-wrap:wrap;gap:12px}
+  .pulsante{display:inline-block;padding:14px 22px;border-radius:12px;background:var(--luminoso);color:#fff;font-weight:600;text-decoration:none}
+  .pulsante.secondario{background:transparent;border:1px solid var(--chiaro)}
+  @media (max-width:900px){.schede{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:560px){.schede{grid-template-columns:1fr}}
+</style>
