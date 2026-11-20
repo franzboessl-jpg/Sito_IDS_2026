@@ -1,12 +1,11 @@
-# Pubblicazione automatica nell'area di prova: impiantidisicurezza.it/nuovo/
-# A ogni modifica sul ramo main il sito viene compilato e caricato via FTPS.
+# Pubblicazione nell'area di prova: impiantidisicurezza.it/nuovo/
+# SOLO MANUALE: parte quando Franz approva le modifiche (Actions > Pubblica area di prova > Run workflow).
+# Le modifiche su main restano salvate su GitHub ma non vanno online da sole.
 # Credenziali nei Secrets del repository: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD.
 # L'utente FTP deve avere come cartella iniziale /httpdocs/nuovo (non può toccare il sito vero).
 name: Pubblica area di prova
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:
