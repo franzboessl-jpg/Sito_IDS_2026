@@ -1,6 +1,6 @@
 ---
 // Animazione originale I.D.S. del principio MicroTrack (pianta dall'alto + segnale per sottocella).
-// Sequenza di 16 s: campo attivo → un animale attraversa (sotto soglia) → una persona attraversa
+// Sequenza di 15 s: campo attivo → un animale attraversa (sotto soglia) → una persona attraversa
 // (sopra soglia) → allarme localizzato in metri. Pulsanti per i passi e pausa (WCAG 2.2.2);
 // con "riduci animazioni" parte ferma sul passo dell'allarme.
 // Valori didattici coerenti con la scheda tecnica: sottocelle di 2 m (60 sottocelle = 120 m di perimetro).
@@ -22,9 +22,9 @@ const telecamere = [
 ];
 const passi = [
   { t: 0, fermo: 0, titolo: 'Campo attivo' },
-  { t: 2, fermo: 4, titolo: 'Passa un animale' },
-  { t: 6.6, fermo: 8.3, titolo: 'Passa una persona' },
-  { t: 10.5, fermo: 11, titolo: 'Allarme localizzato' },
+  { t: 1, fermo: 3, titolo: 'Passa un animale' },
+  { t: 5.6, fermo: 7.3, titolo: 'Passa una persona' },
+  { t: 9.5, fermo: 10, titolo: 'Allarme localizzato' },
 ];
 ---
 <figure class="animazione" data-mt-anim data-soglie={JSON.stringify(soglie)}>
@@ -109,6 +109,12 @@ const passi = [
       <circle cx="0" cy="1" r="7" fill="#C9D6E2" stroke="#F4F7FA" stroke-width="2" />
     </g>
 
+    <!-- etichetta "nessun allarme" al passaggio dell'animale -->
+    <g data-no-allarme opacity="0" transform="translate(150 300)">
+      <rect x="24" y="-17" width="186" height="30" rx="6" fill="#E8A33D" />
+      <text x="117" y="3" text-anchor="middle" class="et forte scuro">NESSUN ALLARME</text>
+    </g>
+
     <!-- segnaposto dell'allarme -->
     <g data-allarme opacity="0">
       <circle r="22" fill="none" stroke="#E24C3B" stroke-width="3" data-onda />
@@ -125,7 +131,7 @@ const passi = [
       <line x1="60" y1="470" x2="60" y2="590" stroke="#8FB0CC" stroke-width="1.5" />
       <g data-barre></g>
       <path d={pathSoglia} fill="none" stroke="#E24C3B" stroke-width="2.5" stroke-linejoin="round" />
-      <text x="836" y={yEtichetta} text-anchor="end" class="et piccolo rosso">soglia di allarme specifica del terreno</text>
+      <text x="836" y={yEtichetta} text-anchor="end" class="et piccolo rosso">soglia di allarme calibrata sul terreno</text>
       <g class="et piccolo" text-anchor="middle">
         <text x="60" y="608">0</text><text x="255" y="608">30</text><text x="450" y="608">60</text><text x="645" y="608">90</text><text x="840" y="608">120</text>
       </g>
@@ -138,7 +144,8 @@ const passi = [
 </figure>
 
 <script>
-  const DURATA = 16, N = 60, METRI = 120;
+  const DURATA = 15, N = 60, METRI = 120;
+  const PX = 290; // punto di ingresso della persona sul lato nord: visuale libera per tutte e tre le PTZ
   const X0 = 60, LARGH = 780, BASE = 590;
 
   document.querySelectorAll<HTMLElement>('[data-mt-anim]').forEach((box) => {
@@ -159,7 +166,7 @@ const passi = [
       }
       return best;
     };
-    const sGatto = ascissa(150, 300), sPersona = ascissa(520, 100);
+    const sGatto = ascissa(150, 300), sPersona = ascissa(PX, 100);
     const iGatto = Math.floor(sGatto / cella), iPersona = Math.floor(sPersona / cella);
     const metriPersona = Math.round((iPersona + 0.5) * METRI / N);
     const pAllarme = percorso.getPointAtLength((iPersona + 0.5) * cella);
@@ -187,6 +194,7 @@ const passi = [
     const rumore = barre.map((_, i) => 0.5 + 0.5 * Math.sin(i * 1.7));
 
     const gatto = q<SVGGElement>('[data-gatto]'), persona = q<SVGGElement>('[data-persona]');
+    const noAllarme = q<SVGGElement>('[data-no-allarme]');
     const allarme = q<SVGGElement>('[data-allarme]'), onda = q<SVGCircleElement>('[data-onda]');
     q<SVGTextElement>('[data-testo-allarme]').textContent = `ALLARME · ${metriPersona} m`;
     allarme.setAttribute('transform', `translate(${pAllarme.x} ${pAllarme.y})`);
@@ -210,20 +218,20 @@ const passi = [
     const vicinanza = (d: number) => Math.max(0, 1 - Math.abs(d) / 34);
 
     const disegna = (t: number) => {
-      // gatto: da fuori a dentro sul lato sinistro (t 2 → 6)
-      const visGatto = t >= 2 && t < 6.3;
-      const gx = 60 + fra(t, 2, 6) * 190;
+      // gatto: da fuori a dentro sul lato sinistro (t 1 → 5); rallenta mentre attraversa il campo
+      const visGatto = t >= 1 && t < 5.3;
+      const gx = t < 1.9 ? 70 + fra(t, 1, 1.9) * 52 : t < 4.2 ? 122 + fra(t, 1.9, 4.2) * 56 : 178 + fra(t, 4.2, 5) * 72;
       gatto.setAttribute('transform', `translate(${gx} 300)`);
       gatto.setAttribute('opacity', visGatto ? '1' : '0');
       const segGatto = visGatto ? vicinanza(gx - 150) : 0;
 
-      // persona: da fuori a dentro sul lato nord (t 6.6 → 10.4), poi resta ferma
-      const visPersona = t >= 6.6 && t < 15.4;
-      const py = -20 + fra(t, 6.6, 10.4) * 185;
-      persona.setAttribute('transform', `translate(520 ${py})`);
+      // persona: da fuori a dentro sul lato nord (t 5.6 → 9.4), poi resta ferma
+      const visPersona = t >= 5.6 && t < 14.4;
+      const py = -20 + fra(t, 5.6, 9.4) * 185;
+      persona.setAttribute('transform', `translate(${PX} ${py})`);
       persona.setAttribute('opacity', visPersona && py > 52 ? '1' : '0');
       const segPersona = visPersona && py > 52 ? vicinanza(py - 100) : 0;
-      const inAllarme = t >= 8.8 && t < 15.4;
+      const inAllarme = t >= 7.8 && t < 14.4;
 
       // barre
       barre.forEach((b, i) => {
@@ -244,13 +252,14 @@ const passi = [
       evAnimale.setAttribute('stroke-opacity', String(0.75 * segGatto));
       evPersona.setAttribute('stroke-opacity', inAllarme ? String(0.65 + 0.3 * Math.sin(t * 6)) : '0');
       allarme.setAttribute('opacity', inAllarme ? '1' : '0');
+      noAllarme.setAttribute('opacity', segGatto > 0.05 ? '1' : '0');
       // PTZ: a riposo panoramica larga; in allarme ruotano e stringono (zoom) sull'intruso, poi tornano
       CAM.forEach((c) => {
-        const verso = (yy: number) => vicino(c.riposo, Math.atan2(yy - c.y, 520 - c.x) / RAD);
-        const dist = (yy: number) => Math.hypot(520 - c.x, yy - c.y);
+        const verso = (yy: number) => vicino(c.riposo, Math.atan2(yy - c.y, PX - c.x) / RAD);
+        const dist = (yy: number) => Math.hypot(PX - c.x, yy - c.y);
         let k = 0, ang = c.riposo, r = 125;
-        if (inAllarme) { k = liscio(fra(t, 8.8, 9.7)); ang = c.riposo + (verso(py) - c.riposo) * k; r = 125 + (dist(py) + 30 - 125) * k; }
-        else if (t >= 15.4) { const tornata = liscio(fra(t, 15.4, 16)); k = 1 - tornata; ang = verso(165) + (c.riposo - verso(165)) * tornata; r = dist(165) + 30 + (125 - dist(165) - 30) * tornata; }
+        if (inAllarme) { k = liscio(fra(t, 7.8, 8.7)); ang = c.riposo + (verso(py) - c.riposo) * k; r = 125 + (dist(py) + 30 - 125) * k; }
+        else if (t >= 14.4) { const tornata = liscio(fra(t, 14.4, 15)); k = 1 - tornata; ang = verso(165) + (c.riposo - verso(165)) * tornata; r = dist(165) + 30 + (125 - dist(165) - 30) * tornata; }
         const semi = 42 - 32 * k;
         c.testa.setAttribute('transform', `rotate(${ang})`);
         c.cono.setAttribute('d', spicchio(ang, semi, r));
@@ -262,16 +271,16 @@ const passi = [
 
       let testo = 'Campo attivo: il perimetro è sorvegliato, nessun segnale supera la soglia.';
       let passo = 0;
-      if (t >= 2 && t < 6.6) { passo = 1; testo = 'Un piccolo animale attraversa: il segnale sale ma resta sotto la soglia di quel tratto, nessun allarme.'; }
-      else if (t >= 6.6 && t < 8.8) { passo = 2; testo = 'Una persona si avvicina al perimetro…'; }
-      else if (inAllarme) { passo = t < 10.5 ? 2 : 3; testo = `Allarme: il segnale supera la soglia di quel tratto. Intrusione localizzata a ${metriPersona} m lungo il perimetro: le telecamere PTZ (fino a 3 insieme) si posizionano sull’intruso e lo seguono.`; }
+      if (t >= 1 && t < 5.6) { passo = 1; testo = 'Un piccolo animale attraversa: il segnale sale ma resta sotto la soglia di quel tratto, nessun allarme.'; }
+      else if (t >= 5.6 && t < 7.8) { passo = 2; testo = 'Una persona si avvicina al perimetro…'; }
+      else if (inAllarme) { passo = t < 9.5 ? 2 : 3; testo = `Allarme: il segnale supera la soglia di quel tratto. Intrusione localizzata a ${metriPersona} m lungo il perimetro: le telecamere PTZ (fino a 3 insieme) si posizionano sull’intruso e lo seguono.`; }
       if (stato.textContent !== testo) stato.textContent = testo;
       stato.classList.toggle('rosso', inAllarme);
       pulsanti.forEach((p, i) => p.setAttribute('aria-pressed', String(i === passo)));
     };
 
     let t = 0, inCorso = !window.matchMedia('(prefers-reduced-motion: reduce)').matches, ultimo = 0;
-    if (!inCorso) t = 11;
+    if (!inCorso) t = 10;
     const aggiornaPausa = () => {
       pausa.textContent = inCorso ? '❚❚' : '▶';
       pausa.setAttribute('aria-label', inCorso ? 'Metti in pausa l’animazione' : 'Avvia l’animazione');
@@ -301,6 +310,7 @@ const passi = [
   .piccolo{font-size:15px}
   .forte{font-weight:700;fill:#fff}
   .rosso{fill:#FF7B6B}
+  .scuro{fill:#0A1A2E}
   .stato{margin:0;min-height:3em;font-family:var(--font-testo);font-size:16px;line-height:1.5;color:var(--ghiaccio);border-left:4px solid var(--luminoso);padding:4px 0 4px 12px}
   .stato.rosso{border-color:#E24C3B;color:#fff}
   .comandi{display:flex;flex-wrap:wrap;gap:6px}
