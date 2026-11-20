@@ -38,9 +38,8 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
           sudo apt-get install -y -qq lftp > /dev/null
-          # credenziali in .netrc: non compaiono nella riga di comando né nei registri
-          umask 077
-          printf 'machine %s login %s password %s\n' "$FTP_SERVER" "$FTP_USERNAME" "$FTP_PASSWORD" > ~/.netrc
+          # la password passa da una variabile d'ambiente: non compare nella riga di comando né nei registri
+          export LFTP_PASSWORD="$FTP_PASSWORD"
           lftp -c "
             set ftp:ssl-force true;
             set ftp:ssl-protect-data true;
@@ -50,10 +49,9 @@ jobs:
             set net:timeout 20;
             set net:max-retries 2;
             set net:reconnect-interval-base 5;
-            open ftp://$FTP_SERVER;
+            open --env-password --user \"$FTP_USERNAME\" ftp://$FTP_SERVER;
             mirror --reverse --delete --verbose --parallel=2 dist/ ./
           "
-          rm -f ~/.netrc
 
       - name: Avviso credenziali mancanti
         if: env.FTP_SERVER == ''
