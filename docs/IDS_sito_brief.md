@@ -98,7 +98,7 @@ Ogni argomento può avere tre livelli: **In breve** (un minuto), **Come funziona
 - Videoanalisi, storia dal 1975, stabilimento di 6.000 m² con campo prove esterno.
 
 ## 6. Decisioni tecniche (20/11/2026)
-- **Piattaforma**: sito statico generato con **Astro**, senza database. Codice nel repository GitHub privato `franzboessl-jpg/sito_ids_2026`. Blog in file Markdown (`src/content/blog/`).
+- **Piattaforma**: sito statico generato con **Astro**, senza database. Codice nel repository GitHub privato `franzboessl-jpg/Sito_IDS_2026`. Blog in file Markdown (`src/content/blog/`).
 - **Hosting del sito**: United Host, pannello Plesk `hostingweb.unitedhost.eu` (server 185.4.142.126), cartella `httpdocs`. Il pannello `hostingmail.unitedhost.eu` gestisce solo la posta.
 - **DNS**: su **Cloudflare** (`dale` / `lilyana.ns.cloudflare.com`), non su United Host. Al lancio non si toccano MX, SPF e DKIM.
 - **Area di prova**: `impiantidisicurezza.it/nuovo/`, compilata con `npm run build:prova` (pagine marcate non indicizzabili). Il vecchio sito Xara resta online fino al lancio.
