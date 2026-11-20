@@ -1,6 +1,6 @@
 # Sito I.D.S. Sicurezza – Brief di progetto
 
-Documento di riferimento per il rinnovo del sito **impiantidisicurezza.it**. Stato al 20 novembre 2026: **landing page definita** (versione v3).
+Documento di riferimento per il rinnovo del sito **impiantidisicurezza.it**. Stato al 20 novembre 2026: **landing page definita** (v3.4) e convertita in progetto Astro.
 
 ## 1. Contesto
 
@@ -54,13 +54,13 @@ Regola: sezioni "Casa" verso i toni chiari della scala, sezioni tecniche e difes
 
 ## 3. Landing page (definita)
 
-File: `index.html` + cartella `assets/` (pacchetto `IDS_landing_web_v3.zip`).
+File: `src/pages/index.astro` + immagini in `public/assets/` (origine: pacchetto `IDS_landing_web_v3.4`).
 
 - Logo bianco in alto, riga "Ingegneria della sicurezza e integrazione dei sistemi", titolo "Ogni esigenza di sicurezza merita la soluzione giusta."
 - **Due schede grandi**, cliccabili per intero (senza pulsanti, effetto al passaggio del mouse):
-  - **Casa e attività** → `casa.html` – "Soluzioni chiare, affidabili e su misura per abitazioni, negozi e uffici." – foto villa con ulivo.
-  - **Sistemi avanzati** → `sistemi-avanzati.html` – "Infrastrutture, industria, difesa e protezioni specialistiche." – foto recinzione con scatola INTREPID e telecamera dome.
-- **Sei schede attività** su una riga (3 per riga su tablet, 2 su cellulare): Antintrusione, Videosorveglianza, Antincendio, Controllo accessi, Domotica, Cablaggio strutturato → `antintrusione.html`, `videosorveglianza.html`, `antincendio.html`, `controllo-accessi.html`, `domotica.html`, `cablaggio-strutturato.html`.
+  - **Casa e attività** → `/casa/` – "Soluzioni chiare, affidabili e su misura per abitazioni, negozi e uffici." – foto villa con ulivo.
+  - **Sistemi avanzati** → `/sistemi-avanzati/` – "Infrastrutture, industria, difesa e protezioni specialistiche." – foto recinzione con scatola INTREPID e telecamera dome.
+- **Sei schede attività** su una riga (3 per riga su tablet, 2 su cellulare): Antintrusione, Videosorveglianza, Antincendio, Controllo accessi, Domotica, Cablaggio strutturato → `/antintrusione/`, `/videosorveglianza/`, `/antincendio/`, `/controllo-accessi/`, `/domotica/`, `/cablaggio-strutturato/`.
 - Scelta confermata: Antintrusione e Videosorveglianza restano tra le sei attività, perché le schede grandi dividono per tipo di cliente e quelle piccole per tecnologia.
 
 ## 4. Struttura delle pagine interne (da realizzare)
@@ -97,9 +97,20 @@ Ogni argomento può avere tre livelli: **In breve** (un minuto), **Come funziona
 - Partnership con Southwest Microwave (MicroPoint, MicroTrack).
 - Videoanalisi, storia dal 1975, stabilimento di 6.000 m² con campo prove esterno.
 
-## 6. Da decidere / prossimi passi
-- Pagina **Casa e attività** (prossima da realizzare), poi **Sistemi avanzati**, poi le sei pagine tecnologia.
-- Piattaforma: WordPress con tema su misura (se il piano United Host ha PHP e MySQL) oppure sito statico.
-- Collocazione delle voci della vecchia fascia "I.D.S. Advanced Integration" (Sistemi proprietari, Connector, Soluzioni non convenzionali, Approfondimenti): proposta di inserirle in "Sistemi avanzati".
-- Foto reali di impianti e del campo prove da affiancare a quelle generate.
-- Versione vettoriale o ad alta risoluzione del logo.
+## 6. Decisioni tecniche (20/11/2026)
+- **Piattaforma**: sito statico generato con **Astro**, senza database. Codice nel repository GitHub privato `franzboessl-jpg/sito_ids_2026`. Blog in file Markdown (`src/content/blog/`).
+- **Hosting del sito**: United Host, pannello Plesk `hostingweb.unitedhost.eu` (server 185.4.142.126), cartella `httpdocs`. Il pannello `hostingmail.unitedhost.eu` gestisce solo la posta.
+- **DNS**: su **Cloudflare** (`dale` / `lilyana.ns.cloudflare.com`), non su United Host. Al lancio non si toccano MX, SPF e DKIM.
+- **Area di prova**: `impiantidisicurezza.it/nuovo/`, compilata con `npm run build:prova` (pagine marcate non indicizzabili). Il vecchio sito Xara resta online fino al lancio.
+- **PHP** sul server: 7.3 (fuori supporto) → portare a 8.2/8.3 prima del modulo contatti.
+- **SEO**: titolo e descrizione per pagina, sitemap, robots.txt, dati strutturati LocalBusiness (due sedi), P.IVA nel piè di pagina. Al lancio: reindirizzamenti 301 dalle pagine del vecchio sito, Google Search Console, collegamento al Profilo dell'attività su Google.
+- **Originali delle foto**: restano su `Z:\SITO WEB I.D.S\2026`; nel repository solo le versioni WebP ottimizzate.
+
+## 7. Prossimi passi
+1. Backup del vecchio sito (`httpdocs`) prima di qualunque modifica.
+2. Pubblicazione automatica GitHub → area di prova `/nuovo/`.
+3. Pagina **Casa e attività**, poi **Sistemi avanzati**, poi le sei pagine tecnologia.
+4. Primi articoli del blog con l'esperienza di I.D.S. e foto reali degli impianti.
+5. Modulo contatti, pagina privacy e cookie.
+6. Lancio: contenuto di `/nuovo/` in radice, reindirizzamenti 301, Search Console.
+- Da reperire: versione vettoriale o ad alta risoluzione del logo.

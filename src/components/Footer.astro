@@ -1,0 +1,33 @@
+---
+import { AZIENDA, tel, url } from '../site';
+const anno = new Date().getFullYear();
+const sedi = [AZIENDA.sede, AZIENDA.uffici];
+---
+<footer class="footer">
+  <div class="inner">
+    {sedi.map((s) => (
+      <div class="col">
+        <p class="label">{s.etichetta}</p>
+        <p>{s.via}<br />{s.cap} {s.citta} ({s.prov})</p>
+        <p>{s.telefoni.map((t, i) => (<>{i > 0 && ' – '}<a href={tel(t)}>{t}</a></>))}</p>
+      </div>
+    ))}
+    <div class="col">
+      <p class="label">Contatti</p>
+      <p><a href={`mailto:${AZIENDA.email}`}>{AZIENDA.email}</a></p>
+      <p><a href={url('/blog/')}>Blog e approfondimenti</a></p>
+    </div>
+  </div>
+  <p class="legal">© {anno} {AZIENDA.nome} – {AZIENDA.ragioneSociale} – P.IVA {AZIENDA.piva}</p>
+</footer>
+
+<style>
+  .footer{position:relative;margin-top:24px;border-top:1px solid rgba(143,176,204,.3);background:rgba(10,26,46,.55);font-size:14px;line-height:1.55}
+  .inner{width:min(1560px,95%);margin:0 auto;padding:26px 0 10px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+  .col p{margin:0 0 6px;color:var(--chiaro)}
+  .label{font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:var(--ghiaccio)!important}
+  a{color:var(--chiaro);text-decoration:none}
+  a:hover,a:focus-visible{color:#fff;text-decoration:underline}
+  .legal{width:min(1560px,95%);margin:0 auto;padding:10px 0 22px;font-size:12px;color:var(--chiaro);opacity:.85}
+  @media (max-width:700px){.inner{grid-template-columns:1fr;gap:14px}}
+</style>

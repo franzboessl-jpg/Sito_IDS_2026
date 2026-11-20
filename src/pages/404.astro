@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import { url } from '../site';
+---
+<Base title="Pagina non trovata | I.D.S. Sicurezza" description="La pagina richiesta non esiste o è in preparazione.">
+  <Header />
+  <main class="wrap">
+    <h1>Pagina in preparazione</h1>
+    <p>La pagina che cerchi non esiste ancora o è stata spostata. Il nuovo sito è in costruzione.</p>
+    <p><a href={url('/')}>Torna alla pagina iniziale</a></p>
+  </main>
+</Base>
+<style>
+  .wrap{position:relative;width:min(860px,92%);margin:0 auto;padding:60px 0;font-family:var(--font-testo);font-size:18px;line-height:1.6}
+  h1{font-family:var(--font-titoli);color:#fff}
+  a{color:var(--luminoso);font-weight:600}
+</style>

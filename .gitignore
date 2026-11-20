@@ -3,6 +3,11 @@ Thumbs.db
 desktop.ini
 .DS_Store
 
+# Astro / Node
+node_modules/
+dist/
+.astro/
+
 # Originali e pacchetti: restano su Z:\SITO WEB I.D.S\2026
 *.zip
 *.psd

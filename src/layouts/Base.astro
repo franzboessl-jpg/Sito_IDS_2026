@@ -1,0 +1,84 @@
+---
+// Struttura comune di ogni pagina: <head> con SEO, dati strutturati, piè di pagina
+import '../styles/global.css';
+import Footer from '../components/Footer.astro';
+import { AZIENDA, url } from '../site';
+
+interface Props {
+  title: string;          // titolo nei risultati di Google (circa 50-60 caratteri)
+  description: string;    // descrizione nei risultati (circa 140-160 caratteri)
+  image?: string;         // immagine per condivisioni (percorso in public/)
+  ogTitle?: string;
+  type?: 'website' | 'article';
+}
+const { title, description, image = '/assets/sistemi-avanzati.webp', ogTitle = title, type = 'website' } = Astro.props;
+
+const staging = process.env.STAGING === '1';
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(url(image), Astro.site).href;
+
+const datiStrutturati = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: AZIENDA.nome,
+  legalName: AZIENDA.ragioneSociale,
+  url: Astro.site?.href,
+  logo: new URL(url('/assets/logo-ids-blu.png'), Astro.site).href,
+  image: ogImage,
+  email: AZIENDA.email,
+  vatID: 'IT' + AZIENDA.piva,
+  foundingDate: String(AZIENDA.dal),
+  telephone: '+39 ' + AZIENDA.sede.telefoni[0],
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: AZIENDA.sede.via,
+    postalCode: AZIENDA.sede.cap,
+    addressLocality: AZIENDA.sede.citta,
+    addressRegion: AZIENDA.sede.prov,
+    addressCountry: 'IT',
+  },
+  department: {
+    '@type': 'LocalBusiness',
+    name: `${AZIENDA.nome} – ${AZIENDA.uffici.etichetta}`,
+    telephone: '+39 ' + AZIENDA.uffici.telefoni[0],
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: AZIENDA.uffici.via,
+      postalCode: AZIENDA.uffici.cap,
+      addressLocality: AZIENDA.uffici.citta,
+      addressRegion: AZIENDA.uffici.prov,
+      addressCountry: 'IT',
+    },
+  },
+};
+---
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  {staging ? <meta name="robots" content="noindex, nofollow" /> : <link rel="canonical" href={canonical} />}
+  <meta name="theme-color" content="#002950" />
+  <link rel="icon" type="image/png" href={url('/assets/favicon.png')} />
+  <link rel="apple-touch-icon" href={url('/assets/favicon.png')} />
+  <meta property="og:type" content={type} />
+  <meta property="og:locale" content="it_IT" />
+  <meta property="og:site_name" content={AZIENDA.nome} />
+  <meta property="og:title" content={ogTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:url" content={canonical} />
+  {!staging && <link rel="sitemap" href={url('/sitemap-index.xml')} />}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script type="application/ld+json" set:html={JSON.stringify(datiStrutturati)} />
+  <slot name="head" />
+</head>
+<body>
+  <slot />
+  <Footer />
+</body>
+</html>
