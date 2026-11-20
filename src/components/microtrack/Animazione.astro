@@ -13,6 +13,13 @@ const w = LARGH / N;
 const pathSoglia = soglie.map((v, i) => `${i === 0 ? 'M' : 'H'}${X0 + i * w} ${i === 0 ? '' : 'V'}${(BASE - v * ALT).toFixed(1)}`).join(' ')
   .replace(/^M(\S+) V/, 'M$1 ') + ` H${X0 + LARGH}`;
 const yEtichetta = BASE - Math.max(...soglie.slice(36)) * ALT - 8;
+// Telecamere PTZ: una sullo stabile, due su pali lungo il perimetro. A riposo sono ferme
+// in panoramica grandangolare; all'allarme si posizionano tutte e tre sull'intruso.
+const telecamere = [
+  { x: 382, y: 217, riposo: -135, etx: -14, ety: 26 },
+  { x: 726, y: 124, riposo: 150, etx: -6, ety: 30 },
+  { x: 174, y: 376, riposo: -40, etx: 34, ety: 6 },
+];
 const passi = [
   { t: 0, fermo: 0, titolo: 'Campo attivo' },
   { t: 2, fermo: 4, titolo: 'Passa un animale' },
@@ -21,9 +28,16 @@ const passi = [
 ];
 ---
 <figure class="animazione" data-mt-anim data-soglie={JSON.stringify(soglie)}>
+  <div class="comandi" role="group" aria-label="Passi dell'animazione">
+    {passi.map((p, i) => (
+      <button type="button" data-vai={p.t} data-fermo={p.fermo} aria-pressed={i === 0 ? 'true' : 'false'}><span class="n">{i + 1}</span> {p.titolo}</button>
+    ))}
+    <button type="button" class="pausa" data-pausa aria-label="Metti in pausa l'animazione">❚❚</button>
+  </div>
+
   <div class="scorri"><svg viewBox="0 0 900 640" role="img" aria-labelledby="mt-anim-titolo mt-anim-desc">
     <title id="mt-anim-titolo">Come MicroTrack distingue un animale da una persona</title>
-    <desc id="mt-anim-desc">Pianta dall'alto di un'abitazione con il campo di rilevazione lungo tutto il perimetro, diviso in sottocelle da 2 metri. Sotto, il grafico del segnale di ogni sottocella con la soglia di allarme di ogni tratto, che varia con il terreno. Un gatto attraversa il perimetro: il segnale resta sotto la soglia e non scatta nulla. Poi una persona attraversa: il segnale supera la soglia, scatta l'allarme, il sistema indica il punto esatto in metri e la telecamera PTZ ruota per inquadrare l'intruso.</desc>
+    <desc id="mt-anim-desc">Pianta dall'alto di uno stabile con il campo di rilevazione lungo tutto il perimetro, diviso in sottocelle da 2 metri. Sotto, il grafico del segnale di ogni sottocella con la soglia di allarme di ogni tratto, che varia con il terreno. Un gatto attraversa il perimetro: il segnale resta sotto la soglia e non scatta nulla. Poi una persona attraversa: il segnale supera la soglia, scatta l'allarme, il sistema indica il punto esatto in metri e fino a tre telecamere PTZ, ferme in panoramica, si posizionano insieme sull'intruso.</desc>
 
     <!-- Legenda -->
     <g class="legenda" transform="translate(40 30)">
@@ -34,7 +48,7 @@ const passi = [
       <rect x="380" y="-11" width="3" height="14" fill="#fff" fill-opacity=".7" />
       <text x="391" y="0">divisione tra sottocelle (2 m)</text>
       <circle cx="660" cy="-4" r="7" fill="#0A1A2E" stroke="#E3ECF4" stroke-width="2.5" />
-      <text x="674" y="0">telecamera PTZ</text>
+      <text x="674" y="0">telecamere PTZ</text>
     </g>
 
     <!-- Pianta -->
@@ -44,11 +58,11 @@ const passi = [
     <g fill="#1F4D38" stroke="#2C6A4C" stroke-width="2">
       <circle cx="215" cy="190" r="26" /><circle cx="250" cy="335" r="20" /><circle cx="690" cy="345" r="24" />
     </g>
-    <!-- abitazione (ridotta) -->
+    <!-- stabile (ridotto) -->
     <g>
       <rect x="380" y="215" width="160" height="96" rx="5" fill="#2A3F55" stroke="#8FB0CC" stroke-width="2" />
       <path d="M380 215 L460 263 L540 215 M380 311 L460 263 L540 311" stroke="#8FB0CC" stroke-width="1.5" fill="none" opacity=".6" />
-      <text x="460" y="334" text-anchor="middle" class="et piccolo">abitazione</text>
+      <text x="460" y="334" text-anchor="middle" class="et piccolo forte">STABILE</text>
     </g>
     <!-- processore -->
     <line x1="540" y1="290" x2="750" y2="290" stroke="#8FB0CC" stroke-width="2" stroke-dasharray="6 5" />
@@ -56,24 +70,25 @@ const passi = [
     <text x="632" y="295" text-anchor="middle" class="et piccolo">MTP</text>
     <text x="632" y="326" text-anchor="middle" class="et piccolo">processore</text>
 
-    <!-- telecamera PTZ: ronda lenta, all'allarme si orienta sull'intruso -->
-    <g transform="translate(655 205)">
-      <g data-ptz>
-        <path d="M0 0 L150 -46 Q160 0 150 46 Z" fill="url(#mt-cono)" data-cono />
-        <rect x="-4" y="-7" width="24" height="14" rx="3" fill="#E3ECF4" />
-        <rect x="18" y="-5" width="5" height="10" rx="1.5" fill="#0A1A2E" />
+    <!-- telecamere PTZ: ferme in panoramica (grandangolo); all'allarme fino a 3 si posizionano sull'intruso -->
+    {telecamere.map((c, i) => (
+      <g transform={`translate(${c.x} ${c.y})`}>
+        <path fill="url(#mt-cono)" data-cono={i} />
+        <g data-ptz={i} transform={`rotate(${c.riposo})`}>
+          <rect x="-4" y="-6" width="22" height="12" rx="3" fill="#E3ECF4" />
+          <rect x="16" y="-4.5" width="5" height="9" rx="1.5" fill="#0A1A2E" />
+        </g>
+        <circle r="7.5" fill="#0A1A2E" stroke="#E3ECF4" stroke-width="2.5" />
+        <text x={c.etx} y={c.ety} text-anchor="middle" class="et piccolo">{`PTZ ${i + 1}`}</text>
       </g>
-      <circle r="8" fill="#0A1A2E" stroke="#E3ECF4" stroke-width="2.5" />
-      <text x="0" y="30" text-anchor="middle" class="et piccolo">PTZ</text>
-    </g>
-    <!-- campo, sottocelle, cavi, evidenze -->
+    ))}
     <defs>
-      <linearGradient id="mt-cono" x1="0" x2="1" y1="0" y2="0">
-        <stop offset="0" stop-color="#FFE08A" stop-opacity=".55" /><stop offset="1" stop-color="#FFE08A" stop-opacity="0" />
-      </linearGradient>
-      <linearGradient id="mt-cono-allarme" x1="0" x2="1" y1="0" y2="0">
-        <stop offset="0" stop-color="#FF7B6B" stop-opacity=".7" /><stop offset="1" stop-color="#FF7B6B" stop-opacity=".05" />
-      </linearGradient>
+      <radialGradient id="mt-cono" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="scale(160)">
+        <stop offset="0" stop-color="#FFE08A" stop-opacity=".45" /><stop offset="1" stop-color="#FFE08A" stop-opacity="0" />
+      </radialGradient>
+      <radialGradient id="mt-cono-allarme" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="scale(380)">
+        <stop offset="0" stop-color="#FF7B6B" stop-opacity=".6" /><stop offset="1" stop-color="#FF7B6B" stop-opacity=".05" />
+      </radialGradient>
     </defs>
     <defs><path id="mt-percorso" data-percorso d="M190 100 H710 A40 40 0 0 1 750 140 V360 A40 40 0 0 1 710 400 H190 A40 40 0 0 1 150 360 V140 A40 40 0 0 1 190 100 Z" /></defs>
     <use href="#mt-percorso" fill="none" stroke="#4A90D9" stroke-opacity=".38" stroke-width="34" />
@@ -120,12 +135,6 @@ const passi = [
 
   <p class="stato" data-stato>Campo attivo: il perimetro è sorvegliato, nessun segnale supera la soglia.</p>
 
-  <div class="comandi" role="group" aria-label="Passi dell'animazione">
-    {passi.map((p, i) => (
-      <button type="button" data-vai={p.t} data-fermo={p.fermo} aria-pressed={i === 0 ? 'true' : 'false'}><span class="n">{i + 1}</span> {p.titolo}</button>
-    ))}
-    <button type="button" class="pausa" data-pausa aria-label="Metti in pausa l'animazione">❚❚</button>
-  </div>
 </figure>
 
 <script>
@@ -181,9 +190,18 @@ const passi = [
     const allarme = q<SVGGElement>('[data-allarme]'), onda = q<SVGCircleElement>('[data-onda]');
     q<SVGTextElement>('[data-testo-allarme]').textContent = `ALLARME · ${metriPersona} m`;
     allarme.setAttribute('transform', `translate(${pAllarme.x} ${pAllarme.y})`);
-    const ptz = q<SVGGElement>('[data-ptz]'), cono = q<SVGPathElement>('[data-cono]');
-    const PTZ = { x: 655, y: 205 };
-    const ronda = (t: number) => -150 + 35 * Math.sin(t * 0.7);
+    const CAM = [
+      { x: 382, y: 217, riposo: -135 },
+      { x: 726, y: 124, riposo: 150 },
+      { x: 174, y: 376, riposo: -40 },
+    ].map((c, i) => ({ ...c, testa: q<SVGGElement>(`[data-ptz="${i}"]`), cono: q<SVGPathElement>(`[data-cono="${i}"]`) }));
+    const RAD = Math.PI / 180;
+    const spicchio = (ang: number, semi: number, r: number) => {
+      const a = (ang - semi) * RAD, b = (ang + semi) * RAD;
+      return `M0 0 L${r * Math.cos(a)} ${r * Math.sin(a)} A${r} ${r} 0 0 1 ${r * Math.cos(b)} ${r * Math.sin(b)} Z`;
+    };
+    const vicino = (da: number, a: number) => { let d = ((a - da + 540) % 360) - 180; return da + d; };
+    const liscio = (k: number) => k * k * (3 - 2 * k);
     const stato = q<HTMLElement>('[data-stato]');
     const pulsanti = [...box.querySelectorAll<HTMLButtonElement>('[data-vai]')];
     const pausa = q<HTMLButtonElement>('[data-pausa]');
@@ -226,18 +244,18 @@ const passi = [
       evAnimale.setAttribute('stroke-opacity', String(0.75 * segGatto));
       evPersona.setAttribute('stroke-opacity', inAllarme ? String(0.65 + 0.3 * Math.sin(t * 6)) : '0');
       allarme.setAttribute('opacity', inAllarme ? '1' : '0');
-      // PTZ: in allarme ruota (0,8 s) verso l'intruso e lo segue; poi torna alla ronda
-      let ang = ronda(t);
-      if (inAllarme) {
-        const bersaglio = Math.atan2(py - PTZ.y, 520 - PTZ.x) * 180 / Math.PI;
-        const k = fra(t, 8.8, 9.6), e = k * k * (3 - 2 * k);
-        ang = ronda(8.8) + (bersaglio - ronda(8.8)) * e;
-      } else if (t >= 15.4) {
-        const k = fra(t, 15.4, 16), e = k * k * (3 - 2 * k);
-        ang = -140 + (ronda(t) + 140) * e;
-      }
-      ptz.setAttribute('transform', `rotate(${ang})`);
-      cono.setAttribute('fill', inAllarme ? 'url(#mt-cono-allarme)' : 'url(#mt-cono)');
+      // PTZ: a riposo panoramica larga; in allarme ruotano e stringono (zoom) sull'intruso, poi tornano
+      CAM.forEach((c) => {
+        const verso = (yy: number) => vicino(c.riposo, Math.atan2(yy - c.y, 520 - c.x) / RAD);
+        const dist = (yy: number) => Math.hypot(520 - c.x, yy - c.y);
+        let k = 0, ang = c.riposo, r = 125;
+        if (inAllarme) { k = liscio(fra(t, 8.8, 9.7)); ang = c.riposo + (verso(py) - c.riposo) * k; r = 125 + (dist(py) + 30 - 125) * k; }
+        else if (t >= 15.4) { const tornata = liscio(fra(t, 15.4, 16)); k = 1 - tornata; ang = verso(165) + (c.riposo - verso(165)) * tornata; r = dist(165) + 30 + (125 - dist(165) - 30) * tornata; }
+        const semi = 42 - 32 * k;
+        c.testa.setAttribute('transform', `rotate(${ang})`);
+        c.cono.setAttribute('d', spicchio(ang, semi, r));
+        c.cono.setAttribute('fill', k > 0.5 ? 'url(#mt-cono-allarme)' : 'url(#mt-cono)');
+      });
       const fase = (t * 0.9) % 1;
       onda.setAttribute('r', String(18 + fase * 26));
       onda.setAttribute('stroke-opacity', String(1 - fase));
@@ -246,7 +264,7 @@ const passi = [
       let passo = 0;
       if (t >= 2 && t < 6.6) { passo = 1; testo = 'Un piccolo animale attraversa: il segnale sale ma resta sotto la soglia di quel tratto, nessun allarme.'; }
       else if (t >= 6.6 && t < 8.8) { passo = 2; testo = 'Una persona si avvicina al perimetro…'; }
-      else if (inAllarme) { passo = t < 10.5 ? 2 : 3; testo = `Allarme: il segnale supera la soglia di quel tratto. Intrusione localizzata a ${metriPersona} m lungo il perimetro: la telecamera PTZ si orienta sul punto e segue l’intruso.`; }
+      else if (inAllarme) { passo = t < 10.5 ? 2 : 3; testo = `Allarme: il segnale supera la soglia di quel tratto. Intrusione localizzata a ${metriPersona} m lungo il perimetro: le telecamere PTZ (fino a 3 insieme) si posizionano sull’intruso e lo seguono.`; }
       if (stato.textContent !== testo) stato.textContent = testo;
       stato.classList.toggle('rosso', inAllarme);
       pulsanti.forEach((p, i) => p.setAttribute('aria-pressed', String(i === passo)));
@@ -285,10 +303,10 @@ const passi = [
   .rosso{fill:#FF7B6B}
   .stato{margin:0;min-height:3em;font-family:var(--font-testo);font-size:16px;line-height:1.5;color:var(--ghiaccio);border-left:4px solid var(--luminoso);padding:4px 0 4px 12px}
   .stato.rosso{border-color:#E24C3B;color:#fff}
-  .comandi{display:flex;flex-wrap:wrap;gap:8px}
-  button{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid rgba(143,176,204,.55);background:transparent;color:var(--ghiaccio);font:600 15px var(--font-testo);cursor:pointer;transition:background .3s ease,border-color .3s ease}
+  .comandi{display:flex;flex-wrap:wrap;gap:6px}
+  button{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;border:1px solid rgba(143,176,204,.55);background:transparent;color:var(--ghiaccio);font:600 14px var(--font-testo);cursor:pointer;transition:background .3s ease,border-color .3s ease}
   button:hover{border-color:var(--luminoso)}
   button[aria-pressed="true"]{background:var(--luminoso);border-color:var(--luminoso);color:#fff}
-  .pausa{min-width:44px;justify-content:center}
+  .pausa{min-width:40px;justify-content:center;margin-left:auto}
   .n{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.18);font-size:13px}
 </style>
