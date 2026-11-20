@@ -179,8 +179,8 @@ const impieghi = [
   /* testata con immagine Southwest: soggetto a sinistra, testo a destra */
   .hero-destra{justify-content:flex-end}
   .hero-destra .hero-foto{object-position:center 70%}
-  .hero-destra:after{background:linear-gradient(270deg,rgba(10,26,46,.92) 0%,rgba(10,26,46,.6) 38%,rgba(10,26,46,0) 62%),linear-gradient(0deg,rgba(10,26,46,.45),transparent 40%)}
-  .hero-destra .hero-testo{max-width:560px}
+  .hero-destra:after{background:linear-gradient(270deg,rgba(10,26,46,.35) 0%,rgba(10,26,46,0) 45%)}
+  .hero-destra .hero-testo{max-width:520px;margin:clamp(14px,2.5vw,32px);padding:clamp(18px,2.4vw,28px);background:rgba(10,26,46,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-radius:14px;border:1px solid rgba(227,236,244,.18)}
   .titolo-logo{margin:6px 0 14px;display:inline-block;background:#fff;border-radius:10px;padding:12px 18px;line-height:0;box-shadow:0 6px 20px rgba(0,0,0,.35)}
   .titolo-logo img{display:block;width:min(440px,72vw);height:auto}
   .hero-credito{position:absolute;left:14px;bottom:10px;z-index:1;margin:0;font-family:var(--font-testo);font-size:12px;color:rgba(227,236,244,.85)}
@@ -258,6 +258,7 @@ const impieghi = [
     .hero-destra{display:block;min-height:0;background:#0A1A2E}
     .hero-destra .hero-foto{position:static;display:block;height:auto;aspect-ratio:4/3;object-position:22% 70%}
     .hero-destra:after{display:none}
+    .hero-destra .hero-testo{margin:0;background:none;border:0;border-radius:0;-webkit-backdrop-filter:none;backdrop-filter:none}
     .hero-credito{top:8px;bottom:auto;left:auto;right:10px;text-shadow:0 1px 3px rgba(0,0,0,.8)}
     td{white-space:normal}
   }
