@@ -1,0 +1,57 @@
+---
+// Animazione a passi: tre fotogrammi Southwest Microwave (materiale autorizzato, senza filigrana I.D.S.).
+// Avanza da sola ogni 3,5 s; si ferma se l'utente sceglie un passo o se ha chiesto meno animazioni.
+import { url } from '../../site';
+
+const passi = [
+  { img: '/assets/microtrack/animazione-104.webp', titolo: 'Campo attivo', alt: 'Il campo invisibile del MicroTrack lungo il perimetro, nessuno all’interno' },
+  { img: '/assets/microtrack/animazione-105.webp', titolo: 'Una persona si avvicina', alt: 'Una persona cammina verso il perimetro protetto' },
+  { img: '/assets/microtrack/animazione-106.webp', titolo: 'Attraversamento rilevato', alt: 'Il tratto di campo attraversato dalla persona si accende in rosso: il punto è localizzato' },
+];
+---
+<figure class="animazione" data-animazione>
+  <div class="scena">
+    {passi.map((p, i) => (
+      <img src={url(p.img)} alt={p.alt} width="1400" height="933" loading={i === 0 ? 'eager' : 'lazy'} class:list={[{ attivo: i === 0 }]} data-passo={i} />
+    ))}
+  </div>
+  <div class="comandi" role="group" aria-label="Passi dell'animazione">
+    {passi.map((p, i) => (
+      <button type="button" aria-pressed={i === 0 ? 'true' : 'false'} data-vai={i}>
+        <span class="n">{i + 1}</span> {p.titolo}
+      </button>
+    ))}
+  </div>
+  <figcaption>Immagini: Southwest Microwave, Inc.</figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-animazione]').forEach((box) => {
+    const immagini = [...box.querySelectorAll<HTMLImageElement>('[data-passo]')];
+    const pulsanti = [...box.querySelectorAll<HTMLButtonElement>('[data-vai]')];
+    let corrente = 0;
+    let timer: number | undefined;
+    const mostra = (n: number) => {
+      corrente = n;
+      immagini.forEach((im, i) => im.classList.toggle('attivo', i === n));
+      pulsanti.forEach((b, i) => b.setAttribute('aria-pressed', String(i === n)));
+    };
+    pulsanti.forEach((b, i) => b.addEventListener('click', () => { window.clearInterval(timer); timer = undefined; mostra(i); }));
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      timer = window.setInterval(() => mostra((corrente + 1) % immagini.length), 3500);
+    }
+  });
+</script>
+
+<style>
+  .animazione{margin:0;display:grid;gap:12px}
+  .scena{position:relative;aspect-ratio:3/2;border-radius:16px;overflow:hidden;background:#fff;border:1px solid rgba(143,176,204,.45)}
+  .scena img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s ease}
+  .scena img.attivo{opacity:1}
+  .comandi{display:flex;flex-wrap:wrap;gap:8px}
+  button{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid rgba(143,176,204,.55);background:transparent;color:var(--ghiaccio);font:600 15px var(--font-testo);cursor:pointer;transition:background .3s ease,border-color .3s ease}
+  button:hover{border-color:var(--luminoso)}
+  button[aria-pressed="true"]{background:var(--luminoso);border-color:var(--luminoso);color:#fff}
+  .n{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.18);font-size:13px}
+  figcaption{font-family:var(--font-testo);font-size:13px;color:var(--chiaro)}
+</style>

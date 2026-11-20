@@ -1,0 +1,247 @@
+---
+// Pagina di prova di una tecnologia: MicroTrack (cavo sensore interrato).
+// Tono tecnico, sfondo scuro. I riquadri "Testo di Franz" sono segnaposto per i testi definitivi.
+// Foto proprie con filigrana I.D.S. (modo "centro"); animazione Southwest senza filigrana.
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Segnaposto from '../../components/Segnaposto.astro';
+import Animazione from '../../components/microtrack/Animazione.astro';
+import SchemaCampo from '../../components/microtrack/SchemaCampo.astro';
+import { AZIENDA, tel, url } from '../../site';
+
+const F = '/assets/microtrack/';
+const cantiere = [
+  { file: 'scavo-trincea', w: 787, h: 1400, didascalia: 'Scavo della trincea', alt: 'Trincea appena scavata lungo un perimetro in campagna, con la bobina del cavo sensore' },
+  { file: 'trincea-lungo-edificio', w: 1400, h: 788, didascalia: 'La trincea segue il perimetro dell’edificio', alt: 'Trincea per il cavo sensore che corre parallela alla facciata di un edificio' },
+  { file: 'cavi-in-trincea', w: 1400, h: 788, didascalia: 'Cavi posati sul fondo dello scavo', alt: 'Cavo sensore posato sul fondo della trincea prima del rinterro' },
+  { file: 'chiusura-loop', w: 1400, h: 788, didascalia: 'Chiusura dell’anello', alt: 'Cantiere con i cavi sensori che chiudono l’anello attorno all’area da proteggere' },
+  { file: 'posa-sotto-cemento', w: 1400, h: 788, didascalia: 'Posa sotto la futura pavimentazione', alt: 'Cavi sensori posati sul sottofondo prima del getto di cemento' },
+  { file: 'stesura-cavi', w: 787, h: 1400, didascalia: 'Stesura dei cavi', alt: 'Due tecnici stendono il cavo sensore lungo il perimetro di un giardino in pendenza' },
+  { file: 'terminazioni-impermeabilizzate', w: 787, h: 1400, didascalia: 'Terminazioni impermeabilizzate', alt: 'Tecnico al lavoro sulle terminazioni impermeabilizzate dei cavi sensori' },
+  { file: 'processore-in-armadio', w: 787, h: 1400, didascalia: 'Collegamento del processore', alt: 'Tecnico collega i cavi al processore MicroTrack dentro l’armadio di campo' },
+  { file: 'lavoro-finito', w: 1400, h: 788, larga: true, didascalia: 'Lavoro finito: il sensore non si vede', alt: 'Vialetto in autobloccanti e prato completati sopra il cavo sensore, che resta invisibile' },
+];
+const software = [
+  { file: 'software-accoppiamento-segnale', w: 1616, h: 964, didascalia: 'Accoppiamento del segnale lungo il cavo', alt: 'Schermata del software di configurazione con le curve di accoppiamento del segnale lungo il perimetro' },
+  { file: 'software-calibrazione', w: 1800, h: 975, didascalia: 'Calibrazione del sensore', alt: 'Schermata del software durante la calibrazione delle soglie di rilevazione' },
+];
+const impieghi = [
+  { titolo: 'Ville e residenze', testo: 'Perché un sensore invisibile in giardino: estetica, nessuna barriera, animali domestici.' },
+  { titolo: 'Industria e logistica', testo: 'Piazzali, depositi, perimetri lunghi con percorsi irregolari.' },
+  { titolo: 'Impianti fotovoltaici e infrastrutture', testo: 'Perimetri estesi, integrazione con telecamere e videoanalisi.' },
+];
+---
+<Base
+  title="MicroTrack: sensore interrato invisibile per perimetri | I.D.S. Sicurezza"
+  description="MicroTrack è un cavo sensore interrato che crea un campo invisibile lungo il perimetro e localizza il punto di attraversamento. Progetto, posa e taratura: I.D.S. Sicurezza, dal 1975."
+  image="/assets/microtrack/giardino-ripristinato.webp"
+>
+  <Header />
+
+  <main>
+    <section class="hero">
+      <img class="hero-foto" src={url(F + 'giardino-ripristinato.webp')} alt="" width="1800" height="1013" />
+      <div class="hero-testo">
+        <nav class="briciole" aria-label="Percorso">
+          <a href={url('/')}>Home</a> › <a href={url('/sistemi-avanzati/')}>Sistemi avanzati</a> › <span>MicroTrack</span>
+        </nav>
+        <p class="sopratitolo">Protezione perimetrale interrata</p>
+        <h1>MicroTrack</h1>
+        <p class="sottotitolo">Un campo di rilevazione invisibile sotto il prato, il vialetto o il piazzale.</p>
+      </div>
+    </section>
+
+    <div class="contenuto">
+      <section class="in-breve">
+        <h2>In breve</h2>
+        <Segnaposto testo="Cos’è MicroTrack in 4-5 righe, per chi non è tecnico: cosa protegge, perché è invisibile, cosa succede quando qualcuno attraversa il perimetro." righe={4} />
+        <nav class="indice" aria-label="In questa pagina">
+          <a href="#come-funziona">Come funziona</a>
+          <a href="#campo">Il campo di rilevazione</a>
+          <a href="#cantiere">Dal cantiere</a>
+          <a href="#dove-si-usa">Dove si usa</a>
+          <a href="#approfondimento">Approfondimento tecnico</a>
+        </nav>
+      </section>
+
+      <section id="come-funziona" class="due-colonne">
+        <div>
+          <p class="livello">Come funziona</p>
+          <h2>Il perimetro che si accorge di chi passa</h2>
+          <Segnaposto testo="Spiegazione del principio: i due cavi, il campo che generano, il processore che riconosce l’attraversamento e indica il punto preciso (con la precisione di localizzazione)." righe={7} />
+        </div>
+        <Animazione />
+      </section>
+
+      <section id="campo" class="campo">
+        <p class="livello">Come funziona</p>
+        <h2>Il campo di rilevazione in sezione</h2>
+        <SchemaCampo />
+        <div class="due-colonne stretta">
+          <Segnaposto testo="Commento allo schema: cosa determina larghezza e altezza del campo, come si sceglie l’interasse in base al terreno e al tipo di intrusione da rilevare." righe={6} />
+          <div class="tabella-box">
+            <h3>Distanze minime dall’asse dei cavi</h3>
+            <table>
+              <thead><tr><th scope="col">Ostacolo</th><th scope="col">Terreno argilloso</th><th scope="col">Terreno sabbioso</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Recinzioni, pali, oggetti metallici</th><td>3 × Y</td><td>5 × Y</td></tr>
+                <tr><th scope="row">Strade e veicoli in movimento</th><td>4 × Y</td><td>—</td></tr>
+              </tbody>
+            </table>
+            <p class="nota">Y = interasse tra i due cavi.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="cantiere" class="cantiere">
+        <p class="livello">Dal cantiere</p>
+        <h2>Come si installa</h2>
+        <Segnaposto testo="Due-tre righe sulla posa: scavo, profondità, posa sotto prato, ghiaia, autobloccanti o cemento, ripristino del terreno." righe={3} />
+        <div class="galleria">
+          {cantiere.map((c) => (
+            <figure class:list={[{ verticale: c.h > c.w, larga: c.larga }]}>
+              <a href={url(F + c.file + '.webp')} target="_blank" rel="noopener">
+                <img src={url(F + c.file + '.webp')} alt={c.alt} width={c.w} height={c.h} loading="lazy" />
+              </a>
+              <figcaption>{c.didascalia}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      <section class="prima-dopo">
+        <h2>Prima e dopo</h2>
+        <div class="coppia">
+          <figure>
+            <img src={url(F + 'trincea-lungo-edificio.webp')} alt="Il perimetro durante i lavori, con la trincea aperta lungo l’edificio" width="1400" height="788" loading="lazy" />
+            <figcaption><strong>Durante i lavori</strong></figcaption>
+          </figure>
+          <figure>
+            <img src={url(F + 'giardino-ripristinato.webp')} alt="Lo stesso perimetro qualche mese dopo: prato ricresciuto, nessun sensore visibile" width="1800" height="1013" loading="lazy" />
+            <figcaption><strong>Qualche mese dopo</strong>: del sensore non resta traccia</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="software">
+        <p class="livello">Approfondimento tecnico</p>
+        <h2>Taratura e messa in servizio</h2>
+        <div class="due-colonne">
+          <Segnaposto testo="Come si tara il sistema: lettura del segnale lungo tutto il cavo, soglie per tratta, prove di attraversamento, cosa riduce i falsi allarmi." righe={6} />
+          <div class="schermate">
+            {software.map((s) => (
+              <figure>
+                <a href={url(F + s.file + '.webp')} target="_blank" rel="noopener">
+                  <img src={url(F + s.file + '.webp')} alt={s.alt} width={s.w} height={s.h} loading="lazy" />
+                </a>
+                <figcaption>{s.didascalia}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="dove-si-usa" class="impieghi">
+        <h2>Dove si usa</h2>
+        <ul>
+          {impieghi.map((m) => (
+            <li>
+              <h3>{m.titolo}</h3>
+              <Segnaposto testo={m.testo} righe={3} />
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section id="approfondimento" class="approfondimento">
+        <p class="livello">Approfondimento tecnico</p>
+        <h2>Per i progettisti</h2>
+        <Segnaposto testo="Dati per chi progetta: lunghezza massima per processore, risoluzione di localizzazione, integrazione con centrali, VMS e videoanalisi, alimentazione, manutenzione. Eventuale scheda tecnica scaricabile." righe={6} />
+      </section>
+    </div>
+
+    <section class="contatti">
+      <h2>Parliamo del vostro perimetro</h2>
+      <Segnaposto testo="Invito al contatto (1-2 righe): sopralluogo, studio di fattibilità, progetto." righe={2} />
+      <div class="azioni">
+        <a class="pulsante" href={tel(AZIENDA.sede.telefoni[0])}>Chiama {AZIENDA.sede.telefoni[0]}</a>
+        <a class="pulsante secondario" href={`mailto:${AZIENDA.email}`}>Scrivi a {AZIENDA.email}</a>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .hero{position:relative;width:min(1560px,95%);margin:24px auto 0;border-radius:18px;overflow:hidden;border:1px solid rgba(143,176,204,.45);min-height:clamp(300px,34vw,480px);display:flex;align-items:flex-end}
+  .hero-foto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 60%}
+  .hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,26,46,.9) 0%,rgba(10,26,46,.55) 45%,rgba(10,26,46,.05) 78%),linear-gradient(0deg,rgba(10,26,46,.6),transparent 50%)}
+  .hero-testo{position:relative;z-index:1;padding:clamp(22px,4vw,48px);max-width:720px}
+  .briciole{font-family:var(--font-testo);font-size:14px;color:var(--chiaro);margin-bottom:12px}
+  .briciole a{color:var(--chiaro);text-decoration:none}
+  .briciole a:hover{color:#fff;text-decoration:underline}
+  .sopratitolo,.livello{margin:0 0 6px;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--luminoso)}
+  h1{margin:0 0 10px;font-size:clamp(36px,4.6vw,60px);line-height:1.05;color:#fff}
+  .sottotitolo{margin:0;font-family:var(--font-testo);font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ghiaccio)}
+
+  .contenuto{width:min(1200px,92%);margin:0 auto;padding:48px 0 24px}
+  .contenuto > section{padding:48px 0;border-top:1px solid rgba(143,176,204,.22);scroll-margin-top:20px}
+  .contenuto > section:first-child{border-top:0;padding-top:8px}
+  h2{margin:0 0 18px;font-size:clamp(26px,2.6vw,36px);line-height:1.2;color:#fff}
+  h3{margin:0 0 12px;font-size:clamp(18px,1.5vw,21px);color:var(--ghiaccio)}
+
+  .in-breve{display:grid;gap:18px}
+  .indice{display:flex;flex-wrap:wrap;gap:10px}
+  .indice a{padding:9px 16px;border-radius:999px;border:1px solid rgba(143,176,204,.5);color:var(--ghiaccio);font:600 15px var(--font-testo);text-decoration:none;transition:border-color .3s ease,background .3s ease}
+  .indice a:hover,.indice a:focus-visible{border-color:var(--luminoso);background:rgba(74,144,217,.14)}
+
+  .due-colonne{display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(24px,4vw,56px);align-items:center}
+  .due-colonne.stretta{grid-template-columns:1fr 1fr;align-items:start;margin-top:28px}
+  .campo{display:grid}
+
+  .tabella-box{background:rgba(10,26,46,.55);border:1px solid rgba(143,176,204,.35);border-radius:14px;padding:20px}
+  table{width:100%;border-collapse:collapse;font-family:var(--font-testo);font-size:15px}
+  th,td{padding:10px 8px;border-bottom:1px solid rgba(143,176,204,.25);text-align:left;vertical-align:top}
+  thead th{color:var(--chiaro);font-weight:600;font-size:13px;letter-spacing:.04em}
+  tbody th{font-weight:500;color:var(--ghiaccio)}
+  td{font-weight:700;color:#fff;white-space:nowrap}
+  .nota{margin:10px 0 0;font-family:var(--font-testo);font-size:14px;color:var(--chiaro)}
+
+  .cantiere{display:grid;gap:18px}
+  .galleria{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:clamp(150px,17vw,230px);gap:14px}
+  .galleria figure,.schermate figure,.coppia figure{margin:0}
+  .galleria figure{position:relative;border-radius:12px;overflow:hidden;border:1px solid rgba(143,176,204,.3)}
+  .galleria figure.verticale{grid-row:span 2}
+  .galleria figure.larga{grid-column:1 / -1}
+  .galleria a{display:block;height:100%}
+  .galleria img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+  .galleria a:hover img{transform:scale(1.03)}
+  .galleria figcaption{position:absolute;left:0;right:0;bottom:0;margin:0;padding:28px 12px 10px;background:linear-gradient(0deg,rgba(10,26,46,.88),transparent);color:#fff;pointer-events:none}
+  .schermate img,.coppia img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid rgba(143,176,204,.3)}
+  figcaption{margin-top:8px;font-family:var(--font-testo);font-size:14px;color:var(--chiaro)}
+  figcaption strong{color:#fff}
+
+  .coppia{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .coppia img{aspect-ratio:16/9;object-fit:cover}
+  .schermate{display:grid;gap:16px}
+
+  .impieghi ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+  .impieghi li{background:rgba(10,26,46,.55);border:1px solid rgba(143,176,204,.35);border-radius:14px;padding:20px}
+
+  .contatti{width:min(1200px,92%);margin:0 auto;padding:40px 0 64px;display:grid;gap:18px;justify-items:start;border-top:1px solid rgba(143,176,204,.22)}
+  .azioni{display:flex;flex-wrap:wrap;gap:12px}
+  .pulsante{display:inline-block;padding:14px 22px;border-radius:12px;background:var(--luminoso);color:#fff;font-weight:600;text-decoration:none;transition:background .3s ease}
+  .pulsante:hover,.pulsante:focus-visible{background:#3C7EC4}
+  .pulsante.secondario{background:transparent;border:1px solid var(--chiaro)}
+  .pulsante.secondario:hover{background:rgba(74,144,217,.15)}
+
+  @media (max-width:900px){
+    .due-colonne,.due-colonne.stretta,.coppia{grid-template-columns:1fr}
+    .impieghi ul{grid-template-columns:1fr}
+    .galleria{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:clamp(130px,30vw,220px)}
+    .galleria figure.larga{grid-column:auto}
+  }
+  @media (max-width:560px){
+    .hero:after{background:linear-gradient(0deg,rgba(10,26,46,.92) 15%,rgba(10,26,46,.25) 85%)}
+    td{white-space:normal}
+  }
+</style>

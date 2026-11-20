@@ -1,0 +1,103 @@
+---
+// Sezione trasversale del campo di rilevazione MicroTrack, disegnata in scala (1 m = 150 px).
+// Valori tratti dagli schemi Southwest Microwave: DA CONFERMARE da Franz prima della pubblicazione.
+// Disegno in scala (barra 0–1 m in basso a sinistra). Esempio disegnato: interasse Y = 1,2 m, campo primario largo 2 m, campo secondario alto 1,4 m.
+---
+<figure class="schema">
+  <svg viewBox="0 0 1000 640" role="img" aria-labelledby="schema-titolo schema-desc">
+    <title id="schema-titolo">Sezione del campo di rilevazione MicroTrack</title>
+    <desc id="schema-desc">Due cavi sensori interrati a distanza Y tra 0,75 e 2 metri generano un campo invisibile a cupola. Il campo primario è largo da 1,4 a 2,6 metri; il campo secondario arriva fino a circa 1,4 metri di altezza. Una persona alta 1,75 metri è disegnata accanto per confronto.</desc>
+    <defs>
+      <clipPath id="sopra"><rect x="0" y="0" width="1000" height="360" /></clipPath>
+      <clipPath id="sotto"><rect x="0" y="360" width="1000" height="160" /></clipPath>
+      <marker id="freccia" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0 0 10 5 0 10Z" fill="#0A1A2E" />
+      </marker>
+    </defs>
+
+    <!-- Terreno -->
+    <rect x="0" y="360" width="1000" height="160" fill="#E9D4AC" />
+    <line x1="0" y1="360" x2="1000" y2="360" stroke="#5A4520" stroke-width="3" />
+    <text x="24" y="350" class="t piccolo">piano di calpestio</text>
+    <text x="24" y="506" class="t piccolo">terreno</text>
+
+    <!-- Campo secondario e primario: pieno sopra il terreno, attenuato sotto -->
+    <g clip-path="url(#sopra)">
+      <ellipse cx="430" cy="360" rx="230" ry="210" fill="#8FB0CC" fill-opacity=".45" stroke="#1C4467" stroke-width="2.5" stroke-dasharray="10 7" />
+      <ellipse cx="430" cy="360" rx="150" ry="135" fill="#4A90D9" fill-opacity=".55" stroke="#002950" stroke-width="3" />
+    </g>
+    <g clip-path="url(#sotto)" opacity=".45">
+      <ellipse cx="430" cy="360" rx="230" ry="92" fill="#8FB0CC" stroke="#1C4467" stroke-width="2" stroke-dasharray="10 7" />
+      <ellipse cx="430" cy="360" rx="150" ry="62" fill="#4A90D9" stroke="#002950" stroke-width="2" />
+    </g>
+    <text x="430" y="196" text-anchor="middle" class="t">campo secondario</text>
+    <text x="430" y="292" text-anchor="middle" class="t forte bianco">campo primario</text>
+    <text x="430" y="316" text-anchor="middle" class="t piccolo bianco">(zona di rilevazione)</text>
+
+    <!-- Cavi -->
+    <circle cx="340" cy="395" r="9" fill="#C0392B" stroke="#0A1A2E" stroke-width="2" />
+    <circle cx="520" cy="395" r="9" fill="#C0392B" stroke="#0A1A2E" stroke-width="2" />
+    <line x1="160" y1="430" x2="331" y2="398" stroke="#0A1A2E" stroke-width="1.5" />
+    <text x="24" y="440" class="t">cavi sensori</text>
+    <text x="24" y="462" class="t piccolo">interrati</text>
+
+    <!-- Quota Y: interasse cavi -->
+    <line x1="340" y1="405" x2="340" y2="452" class="rif" />
+    <line x1="520" y1="405" x2="520" y2="452" class="rif" />
+    <line x1="342" y1="445" x2="518" y2="445" class="quota" marker-start="url(#freccia)" marker-end="url(#freccia)" />
+    <text x="430" y="472" text-anchor="middle" class="t forte">Y = 0,75 – 2 m</text>
+    <text x="430" y="494" text-anchor="middle" class="t piccolo">interasse tra i cavi</text>
+
+    <!-- Quota larghezza campo primario -->
+    <line x1="280" y1="362" x2="280" y2="560" class="rif" />
+    <line x1="580" y1="362" x2="580" y2="560" class="rif" />
+    <line x1="282" y1="550" x2="578" y2="550" class="quota" marker-start="url(#freccia)" marker-end="url(#freccia)" />
+    <text x="430" y="580" text-anchor="middle" class="t forte">1,4 – 2,6 m</text>
+    <text x="430" y="602" text-anchor="middle" class="t piccolo">larghezza del campo primario</text>
+
+    <!-- Quota altezza campo secondario -->
+    <line x1="430" y1="150" x2="700" y2="150" class="rif" />
+    <line x1="690" y1="152" x2="690" y2="358" class="quota" marker-start="url(#freccia)" marker-end="url(#freccia)" />
+    <text x="704" y="248" class="t forte">fino a</text>
+    <text x="704" y="272" class="t forte">circa 1,4 m</text>
+    <text x="704" y="294" class="t piccolo">altezza del campo</text>
+
+    <!-- Persona per confronto (1,75 m = 262 px) -->
+    <g transform="translate(880 98)" fill="#1E2A36">
+      <circle cx="0" cy="20" r="20" />
+      <path d="M-26 50 Q0 40 26 50 L30 140 L18 140 L16 90 L12 145 L14 262 L2 262 L0 160 L-2 262 L-14 262 L-12 145 L-16 90 L-18 140 L-30 140 Z" />
+    </g>
+    <text x="880" y="384" text-anchor="middle" class="t piccolo">persona alta</text>
+    <text x="880" y="404" text-anchor="middle" class="t piccolo">1,75 m</text>
+
+    <!-- Legenda -->
+    <g transform="translate(24 616)">
+      <rect x="0" y="-14" width="26" height="16" fill="#4A90D9" fill-opacity=".55" stroke="#002950" stroke-width="2" />
+      <text x="34" y="0" class="t piccolo">campo primario</text>    </g>
+    <g transform="translate(700 616)">
+      <rect x="0" y="-14" width="26" height="16" fill="#8FB0CC" fill-opacity=".45" stroke="#1C4467" stroke-width="2" stroke-dasharray="5 3" />
+      <text x="34" y="0" class="t piccolo">campo secondario</text>
+    </g>
+    <g transform="translate(700 590)">
+      <circle cx="13" cy="-6" r="8" fill="#C0392B" stroke="#0A1A2E" stroke-width="2" />
+      <text x="34" y="0" class="t piccolo">cavo sensore (sezione)</text>
+    </g>
+    <g transform="translate(24 590)">
+      <rect x="0" y="-12" width="75" height="10" fill="#0A1A2E" /><rect x="75" y="-12" width="75" height="10" fill="#fff" stroke="#0A1A2E" stroke-width="1.5" />
+      <text x="0" y="-18" class="t piccolo">0</text><text x="150" y="-18" text-anchor="end" class="t piccolo">1 m</text>
+      <text x="162" y="-2" class="t piccolo">scala</text>
+    </g>
+  </svg>
+</figure>
+
+<style>
+  .schema{margin:0;overflow-x:auto;background:#fff;border-radius:16px;padding:clamp(10px,2vw,22px);border:1px solid #C9D7E4}
+  svg{display:block;width:100%;height:auto}
+  @media (max-width:640px){ svg{min-width:640px} } /* sul cellulare lo schema si scorre di lato invece di rimpicciolire il testo */
+  .t{font-family:var(--font-testo);font-size:19px;fill:#0A1A2E}
+  .piccolo{font-size:16px}
+  .forte{font-weight:700}
+  .bianco{fill:#fff}
+  .quota{stroke:#0A1A2E;stroke-width:2}
+  .rif{stroke:#0A1A2E;stroke-width:1.2;stroke-dasharray:4 4}
+</style>
