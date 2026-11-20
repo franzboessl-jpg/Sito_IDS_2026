@@ -22,7 +22,7 @@ const telecamere = [
 ];
 const passi = [
   { t: 0, fermo: 0, titolo: 'Campo attivo' },
-  { t: 1, fermo: 3, titolo: 'Passa un animale' },
+  { t: 1, fermo: 4.1, titolo: 'Passa un animale' },
   { t: 5.6, fermo: 7.3, titolo: 'Passa una persona' },
   { t: 9.5, fermo: 10, titolo: 'Allarme localizzato' },
 ];
@@ -111,8 +111,8 @@ const passi = [
 
     <!-- etichetta "nessun allarme" al passaggio dell'animale -->
     <g data-no-allarme opacity="0" transform="translate(150 300)">
-      <rect x="24" y="-17" width="186" height="30" rx="6" fill="#E8A33D" />
-      <text x="117" y="3" text-anchor="middle" class="et forte scuro">NESSUN ALLARME</text>
+      <rect x="-6" y="-56" width="186" height="30" rx="6" fill="#E8A33D" />
+      <text x="87" y="-36" text-anchor="middle" class="et forte scuro">NESSUN ALLARME</text>
     </g>
 
     <!-- segnaposto dell'allarme -->
@@ -252,7 +252,8 @@ const passi = [
       evAnimale.setAttribute('stroke-opacity', String(0.75 * segGatto));
       evPersona.setAttribute('stroke-opacity', inAllarme ? String(0.65 + 0.3 * Math.sin(t * 6)) : '0');
       allarme.setAttribute('opacity', inAllarme ? '1' : '0');
-      noAllarme.setAttribute('opacity', segGatto > 0.05 ? '1' : '0');
+      // compare solo dopo che il gatto ha superato la cella, sopra il suo percorso, e resta fino al passo successivo
+      noAllarme.setAttribute('opacity', t >= 1 && t < 5.6 && gx >= 170 ? '1' : '0');
       // PTZ: a riposo panoramica larga; in allarme ruotano e stringono (zoom) sull'intruso, poi tornano
       CAM.forEach((c) => {
         const verso = (yy: number) => vicino(c.riposo, Math.atan2(yy - c.y, PX - c.x) / RAD);
