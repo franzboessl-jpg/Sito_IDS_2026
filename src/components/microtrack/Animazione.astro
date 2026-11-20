@@ -86,8 +86,8 @@ const passi = [
       <radialGradient id="mt-cono" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="scale(160)">
         <stop offset="0" stop-color="#FFE08A" stop-opacity=".45" /><stop offset="1" stop-color="#FFE08A" stop-opacity="0" />
       </radialGradient>
-      <radialGradient id="mt-cono-allarme" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="scale(380)">
-        <stop offset="0" stop-color="#FF7B6B" stop-opacity=".6" /><stop offset="1" stop-color="#FF7B6B" stop-opacity=".05" />
+      <radialGradient id="mt-cono-allarme" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="scale(600)">
+        <stop offset="0" stop-color="#FF7B6B" stop-opacity=".7" /><stop offset="1" stop-color="#FF7B6B" stop-opacity=".15" />
       </radialGradient>
     </defs>
     <defs><path id="mt-percorso" data-percorso d="M710 400 H190 A40 40 0 0 1 150 360 V140 A40 40 0 0 1 190 100 H710 A40 40 0 0 1 750 140 V360 A40 40 0 0 1 710 400 Z" /></defs>
@@ -278,10 +278,13 @@ const passi = [
       CAM.forEach((c) => {
         const verso = (yy: number) => vicino(c.riposo, Math.atan2(yy - c.y, PX - c.x) / RAD);
         const dist = (yy: number) => Math.hypot(PX - c.x, yy - c.y);
+        // zoom ottico: più la telecamera è lontana, più il cono si stringe e si allunga oltre l'intruso
+        const lungo = (yy: number) => dist(yy) * 1.25 + 40;
+        const semiZoom = Math.max(4, Math.min(12, 1400 / dist(165)));
         let k = 0, ang = c.riposo, r = 125;
-        if (inAllarme) { k = liscio(fra(t, 7.8, 8.7)); ang = c.riposo + (verso(py) - c.riposo) * k; r = 125 + (dist(py) + 30 - 125) * k; }
-        else if (t >= 14.4) { const tornata = liscio(fra(t, 14.4, 15)); k = 1 - tornata; ang = verso(165) + (c.riposo - verso(165)) * tornata; r = dist(165) + 30 + (125 - dist(165) - 30) * tornata; }
-        const semi = 42 - 32 * k;
+        if (inAllarme) { k = liscio(fra(t, 7.8, 8.7)); ang = c.riposo + (verso(py) - c.riposo) * k; r = 125 + (lungo(py) - 125) * k; }
+        else if (t >= 14.4) { const tornata = liscio(fra(t, 14.4, 15)); k = 1 - tornata; ang = verso(165) + (c.riposo - verso(165)) * tornata; r = lungo(165) + (125 - lungo(165)) * tornata; }
+        const semi = 42 - (42 - semiZoom) * k;
         c.testa.setAttribute('transform', `rotate(${ang})`);
         c.cono.setAttribute('d', spicchio(ang, semi, r));
         c.cono.setAttribute('fill', k > 0.5 ? 'url(#mt-cono-allarme)' : 'url(#mt-cono)');
