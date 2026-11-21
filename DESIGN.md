@@ -16,7 +16,8 @@ Il sito è **scuro**: fondo blu notte con riflessi di acciaio spazzolato. Non es
 | `--logo` | `#002950` | blu istituzionale del marchio (il logo vettoriale usa `#1C2A50`) |
 | `--acciaio-scuro` | `#1C4467` | fondi di sezione, riflessi del fondo |
 | `--acciaio` | `#3A6A93` | colore guida, sfumature |
-| `--luminoso` | `#4A90D9` | **unico colore d'azione**: pulsanti, collegamenti, sopratitoli, elementi attivi |
+| `--luminoso` | `#4A90D9` | **colore d'azione**: collegamenti, sopratitoli, elementi attivi, bordi al passaggio del mouse |
+| `--azione` | `#2F6DB0` | fondo dei pulsanti primari (stesso blu, più profondo: contrasto con il bianco 5,3:1); al passaggio `--azione-scuro` `#285E99` |
 | `--chiaro` | `#8FB0CC` | testi secondari, didascalie, bordi, icone di secondo piano |
 | `--ghiaccio` | `#E3ECF4` | testo normale su fondo scuro |
 | `--grafite` | `#1E2A36` | testo su fondo chiaro |
@@ -83,23 +84,26 @@ Effetto vetro (`backdrop-filter: blur`) **solo** per il pannello del testo sopra
 **Testata delle pagine interne** – foto a tutta larghezza, raggio 18 px, bordo sottile. Due varianti:
 - *testo a sinistra* su sfumatura scura da sinistra;
 - *testo a destra* (`.hero-destra`) quando il soggetto della foto è a sinistra: sfumatura leggera e testo in un **pannello semitrasparente** (`rgba(10,26,46,.62)`, sfocatura 6 px, raggio 14 px). Sul cellulare la foto va sopra e il testo sotto, per non coprire il soggetto.
-Contenuto: briciole di pane → sopratitolo → titolo → sottotitolo.
+Contenuto: briciole di pane → sopratitolo → titolo → sottotitolo → **un solo pulsante primario** (es. "Richiedi un sopralluogo", che porta ai contatti in fondo alla pagina).
+Se il titolo è un marchio in immagine, l'`h1` contiene anche un testo descrittivo nascosto alla vista (classe `solo-lettori`) per Google e per chi usa un lettore di schermo.
 
 **Indice della pagina** – pillole con bordo `--chiaro`, al passaggio bordo `--luminoso` e fondo azzurro tenue.
 
 **Livelli di lettura** – ogni sezione porta un sopratitolo: *In breve* · *Come funziona* · *Approfondimento tecnico*. Prima ciò che serve a capire di cosa si tratta, poi schemi e animazioni, in fondo i dettagli per i progettisti.
 
 **Pulsanti**
-- Primario: fondo `--luminoso`, testo bianco, raggio 12 px, 14 × 22 px; al passaggio `#3C7EC4`.
+- Primario: fondo `--azione`, testo bianco, raggio 12 px, 14 × 22 px; al passaggio `--azione-scuro`. Mai testo bianco su `--luminoso` (contrasto 3,3:1, insufficiente).
 - Secondario: trasparente con bordo `--chiaro`; al passaggio fondo azzurro tenue.
-- Fuoco da tastiera sempre visibile: contorno 2 px `--ghiaccio` distanziato.
+- Fuoco da tastiera sempre visibile: contorno 2 px `--ghiaccio` distanziato 3 px (regola globale `:focus-visible` in `global.css`).
 - Le schede grandi della landing sono cliccabili per intero, senza pulsanti.
 
 **Schede e riquadri** – fondo `rgba(10,26,46,.55)`, bordo `rgba(143,176,204,.35)`, raggio 14 px, 20 px di spazio interno. Al passaggio (se cliccabili) bordo `--luminoso` e piccolo sollevamento.
 
 **Tabelle tecniche** – dentro un riquadro; intestazioni `--chiaro` 13 px, valori in bianco grassetto, righe separate da linee sottili.
 
-**Gallerie e figure** – foto con raggio 12 px e bordo sottile; didascalia sotto (Inter 14 px, `--chiaro`, eventuale parte in **bianco grassetto**), oppure sovrapposta in basso su sfumatura scura.
+**Gallerie e figure** – foto con raggio 12 px e bordo sottile; didascalia sotto (Inter 14 px, `--chiaro`, eventuale parte in **bianco grassetto**), oppure sovrapposta in basso su sfumatura scura. Il clic apre un **ingrandimento sopra la pagina** (finestra con ✕, si chiude anche con Esc o clic fuori), mai il file nudo in un'altra scheda.
+
+**Intestazione sul cellulare** – logo sopra, menu su una sola riga sotto.
 
 **Segnaposto "Testo di Franz"** – riquadro tratteggiato arancione a righe: indica dove Franz scriverà il testo. Claude non scrive i testi di contenuto: prepara struttura, schemi e segnaposto.
 
@@ -115,10 +119,12 @@ Contenuto: briciole di pane → sopratitolo → titolo → sottotitolo.
 - Stile: ora blu dopo il tramonto o luce naturale pulita, color correction fredda "blu acciaio", nessun testo nell'immagine.
 - Foto generate con ChatGPT: scene semplici e leggibili, **un solo soggetto**, niente affollamento di dettagli; il lato dove va il testo resta calmo.
 - WebP, circa 1800 px di larghezza, preparate con `scripts/foto_web.py`.
+- Per ogni foto di galleria c'è anche una **versione ridotta** (`nome-ridotta.webp`: 720 px per le orizzontali, 480 px per le verticali) usata con `srcset`/`sizes`: il cellulare scarica quella. Obiettivo: meno di 1 MB di immagini per pagina su cellulare.
 - **Filigrana I.D.S.** (variante B) sulle foto I.D.S. del contenuto. **Eccezione testate:** solo il logo piccolo in un angolo in basso, nella parte inquadrata, senza logo centrale.
 - Nessuna filigrana sul materiale di terzi (Southwest, produttori), che porta il credito "Immagine: …" nella didascalia.
 
 **Schemi didattici** (SVG disegnati da Claude)
+- Sul cellulare non si rimpiccioliscono (il testo diventerebbe illeggibile): si scorrono di lato, con sotto la nota "← scorri di lato per vedere tutto →" visibile solo sotto i 640 px.
 - Assi e simboli spiegati con le unità (es. "segnale (dB)", "posizione lungo il perimetro (m)").
 - Legenda chiara, elementi e quote etichettati, nessuna sovrapposizione di testo.
 - Alto contrasto: fondo `--notte`, testi bianchi o `--ghiaccio`, niente grigi chiari.

@@ -34,7 +34,7 @@ const impieghi = [
 <Base
   title="MicroTrack: sensore interrato invisibile per perimetri | I.D.S. Sicurezza"
   description="MicroTrack è un cavo sensore interrato che crea un campo invisibile lungo il perimetro e localizza il punto di attraversamento. Progetto, posa e taratura: I.D.S. Sicurezza, dal 1975."
-  image="/assets/microtrack/giardino-ripristinato.webp"
+  image="/assets/microtrack/testata-microtrack.webp"
 >
   <Header />
 
@@ -46,8 +46,9 @@ const impieghi = [
           <a href={url('/')}>Home</a> › <a href={url('/sistemi-avanzati/')}>Sistemi avanzati</a> › <span>MicroTrack</span>
         </nav>
         <p class="sopratitolo">Protezione perimetrale interrata</p>
-        <h1 class="titolo-logo"><img src={url(F + 'logo-intrepid-microtrack-ii.png')} alt="INTREPID MicroTrack II" width="900" height="60" /></h1>
+        <h1 class="titolo-logo"><img src={url(F + 'logo-intrepid-microtrack-ii.png')} alt="INTREPID MicroTrack II" width="900" height="60" /><span class="solo-lettori"> – sensore perimetrale interrato invisibile</span></h1>
         <p class="sottotitolo">Un campo di rilevazione invisibile sotto il prato, il vialetto o il piazzale.</p>
+        <a class="pulsante testata-azione" href="#contatti">Richiedi un sopralluogo</a>
       </div>
     </section>
 
@@ -100,8 +101,8 @@ const impieghi = [
         <div class="galleria">
           {cantiere.map((c) => (
             <figure class:list={[{ verticale: c.h > c.w, larga: c.larga }]}>
-              <a href={url(F + c.file + '.webp')} target="_blank" rel="noopener">
-                <img src={url(F + c.file + '.webp')} alt={c.alt} width={c.w} height={c.h} loading="lazy" />
+              <a href={url(F + c.file + '.webp')} data-ingrandisci data-didascalia={c.didascalia}>
+                <img src={url(F + c.file + '-ridotta.webp')} srcset={`${url(F + c.file + '-ridotta.webp')} ${c.h > c.w ? 480 : 720}w, ${url(F + c.file + '.webp')} ${c.w}w`} sizes={c.larga ? '(max-width: 900px) 92vw, 1200px' : '(max-width: 900px) 46vw, 390px'} alt={c.alt} width={c.w} height={c.h} loading="lazy" />
               </a>
               <figcaption>{c.didascalia}</figcaption>
             </figure>
@@ -113,11 +114,11 @@ const impieghi = [
         <h2>Prima e dopo</h2>
         <div class="coppia">
           <figure>
-            <img src={url(F + 'trincea-lungo-edificio.webp')} alt="Il perimetro durante i lavori, con la trincea aperta lungo l’edificio" width="1400" height="788" loading="lazy" />
+            <img src={url(F + 'trincea-lungo-edificio-ridotta.webp')} srcset={`${url(F + 'trincea-lungo-edificio-ridotta.webp')} 720w, ${url(F + 'trincea-lungo-edificio.webp')} 1400w`} sizes="(max-width: 900px) 92vw, 590px" alt="Il perimetro durante i lavori, con la trincea aperta lungo l’edificio" width="1400" height="788" loading="lazy" />
             <figcaption><strong>Durante i lavori</strong></figcaption>
           </figure>
           <figure>
-            <img src={url(F + 'giardino-ripristinato.webp')} alt="Lo stesso perimetro qualche mese dopo: prato ricresciuto, nessun sensore visibile" width="1800" height="1013" loading="lazy" />
+            <img src={url(F + 'giardino-ripristinato-ridotta.webp')} srcset={`${url(F + 'giardino-ripristinato-ridotta.webp')} 720w, ${url(F + 'giardino-ripristinato.webp')} 1800w`} sizes="(max-width: 900px) 92vw, 590px" alt="Lo stesso perimetro qualche mese dopo: prato ricresciuto, nessun sensore visibile" width="1800" height="1013" loading="lazy" />
             <figcaption><strong>Qualche mese dopo</strong>: del sensore non resta traccia</figcaption>
           </figure>
         </div>
@@ -131,8 +132,8 @@ const impieghi = [
           <div class="schermate">
             {software.map((s) => (
               <figure>
-                <a href={url(F + s.file + '.webp')} target="_blank" rel="noopener">
-                  <img src={url(F + s.file + '.webp')} alt={s.alt} width={s.w} height={s.h} loading="lazy" />
+                <a href={url(F + s.file + '.webp')} data-ingrandisci data-didascalia={s.didascalia}>
+                  <img src={url(F + s.file + '-ridotta.webp')} srcset={`${url(F + s.file + '-ridotta.webp')} 720w, ${url(F + s.file + '.webp')} ${s.w}w`} sizes="(max-width: 900px) 92vw, 620px" alt={s.alt} width={s.w} height={s.h} loading="lazy" />
                 </a>
                 <figcaption>{s.didascalia}</figcaption>
               </figure>
@@ -160,7 +161,7 @@ const impieghi = [
       </section>
     </div>
 
-    <section class="contatti">
+    <section id="contatti" class="contatti">
       <h2>Parliamo del vostro perimetro</h2>
       <Segnaposto testo="Invito al contatto (1-2 righe): sopralluogo, studio di fattibilità, progetto." righe={2} />
       <div class="azioni">
@@ -169,7 +170,34 @@ const impieghi = [
       </div>
     </section>
   </main>
+
+  <dialog class="ingrandimento" aria-label="Foto ingrandita" data-ingrandimento>
+    <button type="button" class="chiudi" aria-label="Chiudi la foto ingrandita" data-chiudi>✕</button>
+    <img alt="" data-foto />
+    <p data-testo></p>
+  </dialog>
 </Base>
+
+<script>
+  // Ingrandimento delle foto sopra la pagina: si chiude con ✕, Esc o clic fuori dalla foto.
+  const dlg = document.querySelector<HTMLDialogElement>('[data-ingrandimento]');
+  if (dlg && typeof dlg.showModal === 'function') {
+    const foto = dlg.querySelector<HTMLImageElement>('[data-foto]')!;
+    const testo = dlg.querySelector<HTMLElement>('[data-testo]')!;
+    document.querySelectorAll<HTMLAnchorElement>('a[data-ingrandisci]').forEach((a) => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const img = a.querySelector('img');
+        foto.src = a.href;
+        foto.alt = img?.alt || '';
+        testo.textContent = a.dataset.didascalia || '';
+        dlg.showModal();
+      });
+    });
+    dlg.querySelector('[data-chiudi]')!.addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  }
+</script>
 
 <style>
   .hero{position:relative;width:min(1560px,95%);margin:24px auto 0;border-radius:18px;overflow:hidden;border:1px solid rgba(143,176,204,.45);min-height:clamp(300px,34vw,480px);display:flex;align-items:flex-end}
@@ -184,6 +212,14 @@ const impieghi = [
   .titolo-logo{margin:6px 0 14px;display:inline-block;background:#fff;border-radius:10px;padding:12px 18px;line-height:0;box-shadow:0 6px 20px rgba(0,0,0,.35)}
   .titolo-logo img{display:block;width:min(440px,72vw);height:auto}
   .hero-credito{position:absolute;left:14px;bottom:10px;z-index:1;margin:0;font-family:var(--font-testo);font-size:12px;color:rgba(227,236,244,.85)}
+.testata-azione{margin-top:18px}
+  .solo-lettori{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  .ingrandimento{max-width:min(1400px,94vw);max-height:92vh;padding:0;border:1px solid var(--bordo);border-radius:var(--r-scheda);background:var(--notte);color:var(--ghiaccio);overflow:visible}
+  .ingrandimento::backdrop{background:rgba(5,12,22,.85)}
+  .ingrandimento img{display:block;max-width:100%;max-height:calc(92vh - 60px);width:auto;height:auto;margin:0 auto;border-radius:var(--r-scheda) var(--r-scheda) 0 0}
+  .ingrandimento p{margin:0;padding:12px 16px;font-family:var(--font-testo);font-size:15px;color:var(--chiaro)}
+  .chiudi{position:absolute;top:-14px;right:-14px;width:40px;height:40px;border-radius:50%;border:1px solid var(--bordo);background:var(--notte);color:#fff;font-size:18px;cursor:pointer}
+  .chiudi:hover{background:var(--acciaio-scuro)}
   .briciole{font-family:var(--font-testo);font-size:14px;color:var(--chiaro);margin-bottom:12px}
   .briciole a{color:var(--chiaro);text-decoration:none}
   .briciole a:hover{color:#fff;text-decoration:underline}
@@ -240,8 +276,8 @@ const impieghi = [
 
   .contatti{width:min(1200px,92%);margin:0 auto;padding:40px 0 64px;display:grid;gap:18px;justify-items:start;border-top:1px solid rgba(143,176,204,.22)}
   .azioni{display:flex;flex-wrap:wrap;gap:12px}
-  .pulsante{display:inline-block;padding:14px 22px;border-radius:12px;background:var(--luminoso);color:#fff;font-weight:600;text-decoration:none;transition:background .3s ease}
-  .pulsante:hover,.pulsante:focus-visible{background:#3C7EC4}
+  .pulsante{display:inline-block;padding:14px 22px;border-radius:var(--r-medio);background:var(--azione);color:#fff;font-weight:600;text-decoration:none;transition:background .3s ease}
+  .pulsante:hover,.pulsante:focus-visible{background:var(--azione-scuro)}
   .pulsante.secondario{background:transparent;border:1px solid var(--chiaro)}
   .pulsante.secondario:hover{background:rgba(74,144,217,.15)}
 

@@ -10,6 +10,8 @@
   --r-grande:18px; --r-scheda:14px; --r-medio:12px; --r-pillola:999px;
   --ombra-scheda:0 18px 45px rgba(4,14,28,.55); --ombra-leggera:0 6px 20px rgba(0,0,0,.35);
   --linea:rgba(143,176,204,.22); --bordo:rgba(143,176,204,.35);
+  /* fondo dei pulsanti: blu acciaio più profondo, contrasto con il bianco 5,3:1 */
+  --azione:#2F6DB0; --azione-scuro:#285E99;
 }
 *{box-sizing:border-box}
 html{background:var(--notte)}
@@ -29,4 +31,5 @@ body:before{ /* riflessi diagonali "acciaio spazzolato" */
 }
 main{flex:1}
 a{color:var(--luminoso)}
+:focus-visible{outline:2px solid var(--ghiaccio);outline-offset:3px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}

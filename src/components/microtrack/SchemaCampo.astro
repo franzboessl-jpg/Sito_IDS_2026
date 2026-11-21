@@ -89,11 +89,14 @@
     </g>
   </svg>
 </figure>
+<p class="nota-scorri" aria-hidden="true">← scorri di lato per vedere tutto lo schema →</p>
 
 <style>
   .schema{margin:0;overflow-x:auto;background:#fff;border-radius:16px;padding:clamp(10px,2vw,22px);border:1px solid #C9D7E4}
   svg{display:block;width:100%;height:auto}
-  @media (max-width:640px){ svg{min-width:640px} } /* sul cellulare lo schema si scorre di lato invece di rimpicciolire il testo */
+  @media (max-width:640px){ svg{min-width:640px} }
+  .nota-scorri{display:none;margin:8px 0 0;text-align:center;font-family:var(--font-testo);font-size:14px;color:var(--chiaro)}
+  @media (max-width:640px){ .nota-scorri{display:block} } /* sul cellulare lo schema si scorre di lato invece di rimpicciolire il testo */
   .t{font-family:var(--font-testo);font-size:19px;fill:#0A1A2E}
   .piccolo{font-size:16px}
   .forte{font-weight:700}

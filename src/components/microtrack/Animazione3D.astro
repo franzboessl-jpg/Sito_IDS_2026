@@ -227,6 +227,7 @@ const proiezione = JSON.stringify({ A, B, C, D, E, F });
       <text x="450" y="630" text-anchor="middle" class="et piccolo">posizione lungo il perimetro (m) · una barra per sottocella</text>
     </g>
   </svg></div>
+  <p class="nota-scorri" aria-hidden="true">← scorri di lato per vedere tutta l’animazione →</p>
 
   <p class="stato" data-stato>Campo attivo: il perimetro è sorvegliato, nessun segnale supera la soglia.</p>
 </figure>
@@ -432,6 +433,8 @@ const proiezione = JSON.stringify({ A, B, C, D, E, F });
   .animazione{margin:0;display:grid;gap:12px}
   .scorri{overflow-x:auto;border-radius:16px}
   @media (max-width:640px){ svg{min-width:640px} }
+  .nota-scorri{display:none;margin:8px 0 0;text-align:center;font-family:var(--font-testo);font-size:14px;color:var(--chiaro)}
+  @media (max-width:640px){ .nota-scorri{display:block} }
   svg{display:block;width:100%;height:auto;border-radius:16px;background:#0A1A2E;border:1px solid rgba(143,176,204,.45)}
   .legenda text,.et{font-family:var(--font-testo);font-size:17px;fill:#E3ECF4}
   .piccolo{font-size:15px}
