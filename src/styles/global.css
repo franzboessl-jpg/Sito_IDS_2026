@@ -4,6 +4,12 @@
   --luminoso:#4A90D9; --chiaro:#8FB0CC; --ghiaccio:#E3ECF4; --grafite:#1E2A36;
   --font-titoli:Montserrat,Arial,sans-serif;
   --font-testo:Inter,Arial,sans-serif;
+  /* stati (vedi DESIGN.md) */
+  --allarme:#E24C3B; --allarme-chiaro:#FF7B6B; --attenzione:#FFC20E; --segnaposto:#C27C0E;
+  /* forme e profondità */
+  --r-grande:18px; --r-scheda:14px; --r-medio:12px; --r-pillola:999px;
+  --ombra-scheda:0 18px 45px rgba(4,14,28,.55); --ombra-leggera:0 6px 20px rgba(0,0,0,.35);
+  --linea:rgba(143,176,204,.22); --bordo:rgba(143,176,204,.35);
 }
 *{box-sizing:border-box}
 html{background:var(--notte)}
