@@ -3,10 +3,17 @@
 # Le modifiche su main restano salvate su GitHub ma non vanno online da sole.
 # Credenziali nei Secrets del repository: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD.
 # L'utente FTP deve avere come cartella iniziale /httpdocs/nuovo (non può toccare il sito vero).
+# Le cartelle .cagefs e .cl.selector che il server (CloudLinux) crea in /nuovo/ non vanno toccate: sono escluse dal mirror.
+# Per tornare indietro: Run workflow e, in "versione", il nome del ramo di sicurezza (es. online-2026-11-20).
 name: Pubblica area di prova
 
 on:
   workflow_dispatch:
+    inputs:
+      versione:
+        description: "Versione da pubblicare: lasciare 'main' per l'ultima, oppure il nome di un ramo di sicurezza (es. online-2026-11-20) per tornare indietro"
+        required: true
+        default: main
 
 concurrency:
   group: pubblica-prova
@@ -19,6 +26,8 @@ jobs:
       FTP_SERVER: ${{ secrets.FTP_SERVER }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.versione }}
 
       - uses: actions/setup-node@v5
         with:
@@ -52,7 +61,7 @@ jobs:
             set net:max-retries 2;
             set net:reconnect-interval-base 5;
             open --env-password --user \"$FTP_USERNAME\" ftp://$FTP_SERVER;
-            mirror --reverse --delete --verbose --parallel=2 dist/ ./
+            mirror --reverse --delete --verbose --parallel=2 --exclude ^\.cagefs/ --exclude ^\.cl\.selector/ dist/ ./
           "
 
       - name: Avviso credenziali mancanti
