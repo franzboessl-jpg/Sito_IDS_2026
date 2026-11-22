@@ -1,6 +1,6 @@
 ---
 // Sistemi avanzati – pagina indice delle tecnologie (tono tecnico, sfondo scuro).
-// Solo MicroTrack ha già la sua pagina; le altre schede sono segnaposto.
+// Solo MicroTrack ha già la sua pagina; MicroPoint ha la scheda ma non ancora la pagina; le altre sono segnaposto.
 import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
 import Segnaposto from '../../components/Segnaposto.astro';
@@ -9,7 +9,7 @@ import { AZIENDA, tel, url } from '../../site';
 
 const tecnologie = [
   { titolo: 'MicroTrack', marchio: ' II', sottotitolo: 'Cavo sensore interrato', href: '/sistemi-avanzati/microtrack/', foto: '/assets/microtrack/scheda-microtrack.webp', alt: 'Schema Southwest del campo invisibile di MicroTrack™ II: il tratto attraversato da una persona si accende in rosso' },
-  { titolo: 'Tecnologia 2', sottotitolo: 'Da definire', foto: null },
+  { titolo: 'MicroPoint', marchio: ' II', sottotitolo: 'Cavo sensore su recinzione', foto: '/assets/scheda-micropoint.webp', alt: 'Schema Southwest di MicroPoint™ II: una persona tenta di scavalcare la recinzione e il tratto toccato si accende in rosso' },
   { titolo: 'Tecnologia 3', sottotitolo: 'Da definire', foto: null },
   { titolo: 'Tecnologia 4', sottotitolo: 'Da definire', foto: null },
   { titolo: 'Tecnologia 5', sottotitolo: 'Da definire', foto: null },
@@ -44,6 +44,13 @@ const tecnologie = [
                 <h2>{t.titolo}{t.marchio && <><sup class="tm">™</sup>{t.marchio}</>}</h2>
                 <span class="vai">Scopri come funziona →</span>
               </a>
+            ) : t.foto ? (
+              <div class="scheda">
+                <img src={url(t.foto)} alt={t.alt} width="1400" height="788" loading="lazy" />
+                <span class="tema">{t.sottotitolo}</span>
+                <h2>{t.titolo}{t.marchio && <><sup class="tm">™</sup>{t.marchio}</>}</h2>
+                <span class="vai">Pagina in preparazione</span>
+              </div>
             ) : (
               <div class="scheda vuota">
                 <FotoSegnaposto testo={`Foto: ${t.titolo.toLowerCase()}`} rapporto="16/9" />
