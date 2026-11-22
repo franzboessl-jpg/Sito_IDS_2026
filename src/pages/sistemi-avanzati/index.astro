@@ -8,7 +8,7 @@ import FotoSegnaposto from '../../components/FotoSegnaposto.astro';
 import { AZIENDA, tel, url } from '../../site';
 
 const tecnologie = [
-  { titolo: 'MicroTrack', sottotitolo: 'Cavo sensore interrato', href: '/sistemi-avanzati/microtrack/', foto: '/assets/microtrack/giardino-ripristinato.webp', alt: 'Giardino con prato ricresciuto sopra il cavo sensore MicroTrack, invisibile' },
+  { titolo: 'MicroTrack', marchio: ' II', sottotitolo: 'Cavo sensore interrato', href: '/sistemi-avanzati/microtrack/', foto: '/assets/microtrack/scheda-microtrack.webp', alt: 'Schema Southwest del campo invisibile di MicroTrack™ II: il tratto attraversato da una persona si accende in rosso' },
   { titolo: 'Tecnologia 2', sottotitolo: 'Da definire', foto: null },
   { titolo: 'Tecnologia 3', sottotitolo: 'Da definire', foto: null },
   { titolo: 'Tecnologia 4', sottotitolo: 'Da definire', foto: null },
@@ -39,9 +39,9 @@ const tecnologie = [
           <li>
             {t.href ? (
               <a class="scheda" href={url(t.href)}>
-                <img src={url(t.foto!)} alt={t.alt} width="1800" height="1013" loading="lazy" />
+                <img src={url(t.foto!)} alt={t.alt} width="1400" height="788" loading="lazy" />
                 <span class="tema">{t.sottotitolo}</span>
-                <h2>{t.titolo}</h2>
+                <h2>{t.titolo}{t.marchio && <><sup class="tm">™</sup>{t.marchio}</>}</h2>
                 <span class="vai">Scopri come funziona →</span>
               </a>
             ) : (
@@ -82,6 +82,7 @@ const tecnologie = [
   .scheda img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:10px}
   .tema{margin-top:6px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--luminoso)}
   h2{margin:0;font-size:24px;color:#fff}
+  .tm{font-size:.45em;font-weight:600;vertical-align:super;line-height:0;margin-left:1px}
   .vai{font-family:var(--font-testo);font-size:15px;color:var(--chiaro)}
   .vuota{opacity:.75}
   .contatti{width:min(1200px,92%);margin:0 auto;padding:40px 0 64px;display:grid;gap:18px;justify-items:start;border-top:1px solid rgba(143,176,204,.22)}
